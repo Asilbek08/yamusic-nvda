@@ -489,15 +489,15 @@ class YandexMusicDialog(wx.Dialog):
 				text = lyrics_text
 					
 				base_folder = config.conf["yandexMusic"].get("download_folder", "").strip()
+				import os
+				import re
 				if not base_folder:
-					import os
 					base_folder = os.path.join(os.path.expanduser("~"), "Downloads", "YandexMusic")
 				
 				lyrics_folder = os.path.join(base_folder, _("Lyrics"))
 				if not os.path.exists(lyrics_folder):
 					os.makedirs(lyrics_folder)
 					
-				import re
 				safe_title = re.sub(r'[\\/*?:"<>|]', "", display_text).strip()
 				filepath = os.path.join(lyrics_folder, f"{safe_title}.txt")
 				

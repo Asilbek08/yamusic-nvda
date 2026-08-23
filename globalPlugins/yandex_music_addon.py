@@ -83,6 +83,8 @@ TRANSLATIONS = {
 		"Disclaimer & Terms of Use": "Ogohlantirish va Foydalanish shartlari",
 		"DISCLAIMER_TEXT": "OGOHLANTIRISH: Ushbu qo'shimcha faqat ta'lim va ko'zi ojiz foydalanuvchilarga qulaylik yaratish maqsadida ishlab chiqilgan bo'lib, Yandex LLC kompaniyasiga rasmiy aloqasi yo'q. Yuklab olingan barcha materiallar faqat shaxsiy maqsadlarda foydalanish uchun mo'ljallangan. Muallif ushbu dasturdan noto'g'ri foydalanilishi uchun javobgar emas.\n\nUshbu shartlarga rozimisiz?",
 		"Preview / Listen": "Tinglash",
+		"Go Back (Backspace)": "Orqaga qaytish (Backspace)",
+		"Already at main menu": "Siz asosiy ro'yxatdasiz",
 		"Preview Player (e.g. default, aimp.exe):": "Eshitish Pleyeri (masalan: default, aimp.exe):",
 		"Preview Player (e.g. default, aimp.exe, vlc.exe):": "Eshitish Pleyeri (masalan: default, aimp.exe):",
 		"Browse...": "Tanlash...",
@@ -144,6 +146,8 @@ TRANSLATIONS = {
 		"Disclaimer & Terms of Use": "Правовое уведомление и Условия",
 		"DISCLAIMER_TEXT": "ВНИМАНИЕ: Данное дополнение разработано исключительно в образовательных целях и для удобства незрячих пользователей. Оно является неофициальным клиентом и не имеет официального отношения к компании Яндекс. Все скачанные материалы предназначены только для личного использования. Автор не несет ответственности за любое неправомерное использование.\n\nВы принимаете эти условия?",
 		"Preview / Listen": "Tinglash",
+		"Go Back (Backspace)": "Orqaga qaytish (Backspace)",
+		"Already at main menu": "Siz asosiy ro'yxatdasiz",
 		"Preview Player (e.g. default, aimp.exe):": "Плеер (например: default, aimp.exe):",
 		"Preview Player (e.g. default, aimp.exe, vlc.exe):": "Плеер (например: default, aimp.exe):",
 		"Browse...": "Обзор...",
@@ -332,6 +336,7 @@ class YandexMusicDialog(wx.Dialog):
 		super(YandexMusicDialog, self).__init__(parent, title=_("Yandex Music Downloader"), size=(500, 500))
 		self.client = None
 		self.search_results = []
+		self.history = []
 		self._init_ui()
 		self.Bind(wx.EVT_CLOSE, self.on_close)
 
@@ -389,6 +394,10 @@ class YandexMusicDialog(wx.Dialog):
 		
 		menu = wx.Menu()
 		
+		if self.history:
+			item_back = menu.Append(wx.ID_ANY, _("Go Back (Backspace)"))
+			self.Bind(wx.EVT_MENU, lambda e: self.go_back(), item_back)
+			
 		if item_type != "Track":
 			item_view = menu.Append(wx.ID_ANY, _("View/Open"))
 			self.Bind(wx.EVT_MENU, self.on_view, item_view)
@@ -409,6 +418,8 @@ class YandexMusicDialog(wx.Dialog):
 			self.on_preview(None)
 		elif keycode in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER):
 			self.on_view(None)
+		elif keycode == wx.WXK_BACK:
+			self.go_back()
 		else:
 			event.Skip()
 
@@ -447,6 +458,20 @@ class YandexMusicDialog(wx.Dialog):
 				
 		threading.Thread(target=load_stream).start()
 
+	def go_back(self):
+		if not self.history:
+			ui.message(_("Already at main menu"))
+			return
+		prev_results, prev_sel = self.history.pop()
+		self.search_results = prev_results
+		self.lb_results.Clear()
+		for item_type, display_text, obj in prev_results:
+			self.lb_results.Append(display_text)
+		if prev_sel != wx.NOT_FOUND and prev_sel < self.lb_results.GetCount():
+			self.lb_results.SetSelection(prev_sel)
+			self.lb_results.SetFocus()
+			ui.message(self.lb_results.GetString(prev_sel))
+
 	def get_client(self):
 		token = config.conf["yandexMusic"]["token"].strip()
 		if not token:
@@ -459,6 +484,7 @@ class YandexMusicDialog(wx.Dialog):
 			return None
 
 	def on_my_music(self, event):
+		self.history = []
 		ui.message(_("Loading profile..."))
 		
 		def load_my():
@@ -480,7 +506,7 @@ class YandexMusicDialog(wx.Dialog):
 						artist = a.artists[0].name if a.artists else "Unknown"
 						results.append(("Album", f"{_('[Liked Album]')} {artist} - {a.title}", a))
 						
-				wx.CallAfter(self._update_results, results)
+				wx.CallAfter(self._update_results, results, push_history=True)
 				wx.CallAfter(ui.message, _("Done!"))
 			except Exception as e:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
@@ -494,6 +520,7 @@ class YandexMusicDialog(wx.Dialog):
 		ui.message(_("Searching..."))
 		self.lb_results.Clear()
 		self.search_results = []
+		self.history = []
 		
 		def do_search():
 			try:
@@ -563,7 +590,7 @@ class YandexMusicDialog(wx.Dialog):
 							owner = p.owner.name if p.owner else "Unknown"
 							results.append(("Playlist", f"[{_('Playlist')}] {owner} - {p.title}", p))
 							
-				wx.CallAfter(self._update_results, results)
+				wx.CallAfter(self._update_results, results, push_history=True)
 			except Exception as e:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
@@ -604,7 +631,7 @@ class YandexMusicDialog(wx.Dialog):
 						wx.CallAfter(ui.message, _("No results"))
 						return
 						
-					wx.CallAfter(self._update_results, results)
+					wx.CallAfter(self._update_results, results, push_history=True)
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
 					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
@@ -632,7 +659,7 @@ class YandexMusicDialog(wx.Dialog):
 						wx.CallAfter(ui.message, _("No tracks found in this album."))
 						return
 						
-					wx.CallAfter(self._update_results, results)
+					wx.CallAfter(self._update_results, results, push_history=True)
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
 					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
@@ -652,7 +679,7 @@ class YandexMusicDialog(wx.Dialog):
 						if track:
 							artist = track.artists[0].name if track.artists else "Unknown"
 							results.append(("Track", f"[{_('Track')}] {artist} - {track.title}", track))
-					wx.CallAfter(self._update_results, results)
+					wx.CallAfter(self._update_results, results, push_history=True)
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
 					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
@@ -674,7 +701,7 @@ class YandexMusicDialog(wx.Dialog):
 							results.append(("Track", f"[{_('Track')}] {artist} - {track.title}", track))
 						except:
 							pass
-					wx.CallAfter(self._update_results, results)
+					wx.CallAfter(self._update_results, results, push_history=True)
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
 					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
@@ -685,7 +712,9 @@ class YandexMusicDialog(wx.Dialog):
 		else:
 			wx.CallAfter(ui.message, _("Cannot view this item."))
 
-	def _update_results(self, results):
+	def _update_results(self, results, push_history=False):
+		if push_history and self.search_results:
+			self.history.append((self.search_results, self.lb_results.GetSelection()))
 		self.search_results = results
 		self.lb_results.Clear()
 		if not results:

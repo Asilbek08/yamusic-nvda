@@ -82,6 +82,7 @@ TRANSLATIONS = {
 		"Token copied to clipboard!": "Token xotiraga (buferga) nusxalandi!",
 		"Disclaimer & Terms of Use": "Ogohlantirish va Foydalanish shartlari",
 		"DISCLAIMER_TEXT": "OGOHLANTIRISH: Ushbu qo'shimcha faqat ta'lim va ko'zi ojiz foydalanuvchilarga qulaylik yaratish maqsadida ishlab chiqilgan bo'lib, Yandex LLC kompaniyasiga rasmiy aloqasi yo'q. Yuklab olingan barcha materiallar faqat shaxsiy maqsadlarda foydalanish uchun mo'ljallangan. Muallif ushbu dasturdan noto'g'ri foydalanilishi uchun javobgar emas.\n\nUshbu shartlarga rozimisiz?",
+		"Preview / Listen": "Tinglash",
 		"Preview Player (e.g. default, aimp.exe):": "Eshitish Pleyeri (masalan: default, aimp.exe):",
 		"Preview Player (e.g. default, aimp.exe, vlc.exe):": "Eshitish Pleyeri (masalan: default, aimp.exe):",
 		"Browse...": "Tanlash...",
@@ -142,6 +143,7 @@ TRANSLATIONS = {
 		"Token copied to clipboard!": "Токен скопирован в буфер обмена!",
 		"Disclaimer & Terms of Use": "Правовое уведомление и Условия",
 		"DISCLAIMER_TEXT": "ВНИМАНИЕ: Данное дополнение разработано исключительно в образовательных целях и для удобства незрячих пользователей. Оно является неофициальным клиентом и не имеет официального отношения к компании Яндекс. Все скачанные материалы предназначены только для личного использования. Автор не несет ответственности за любое неправомерное использование.\n\nВы принимаете эти условия?",
+		"Preview / Listen": "Tinglash",
 		"Preview Player (e.g. default, aimp.exe):": "Плеер (например: default, aimp.exe):",
 		"Preview Player (e.g. default, aimp.exe, vlc.exe):": "Плеер (например: default, aimp.exe):",
 		"Browse...": "Обзор...",
@@ -386,10 +388,16 @@ class YandexMusicDialog(wx.Dialog):
 		item_type, display_text, obj = self.search_results[sel]
 		
 		menu = wx.Menu()
-		item_view = menu.Append(wx.ID_ANY, _("View/Open"))
-		item_download = menu.Append(wx.ID_ANY, _("Download Selected"))
 		
-		self.Bind(wx.EVT_MENU, self.on_view, item_view)
+		if item_type != "Track":
+			item_view = menu.Append(wx.ID_ANY, _("View/Open"))
+			self.Bind(wx.EVT_MENU, self.on_view, item_view)
+			
+		if item_type == "Track":
+			item_preview = menu.Append(wx.ID_ANY, _("Preview / Listen"))
+			self.Bind(wx.EVT_MENU, self.on_preview, item_preview)
+			
+		item_download = menu.Append(wx.ID_ANY, _("Download Selected"))
 		self.Bind(wx.EVT_MENU, self.on_download, item_download)
 		
 		self.PopupMenu(menu)
@@ -672,6 +680,8 @@ class YandexMusicDialog(wx.Dialog):
 					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			threading.Thread(target=load_liked).start()
 			
+		elif item_type == "Track":
+			self.on_preview(None)
 		else:
 			wx.CallAfter(ui.message, _("Cannot view this item."))
 

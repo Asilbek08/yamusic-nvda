@@ -458,12 +458,35 @@ class YandexMusicDialog(wx.Dialog):
 				client = self.get_client()
 				if not client: return
 				
-				supplement = obj.get_supplement()
-				if not supplement or not supplement.lyrics or not supplement.lyrics.full_lyrics:
+				from logHandler import log
+				log.info(f"YAMUSIC: Getting lyrics for {obj.id}")
+				lyrics_text = None
+				
+				try:
+					# Try supplement first
+					supplement = obj.get_supplement()
+					if supplement and getattr(supplement, 'lyrics', None) and getattr(supplement.lyrics, 'full_lyrics', None):
+						lyrics_text = supplement.lyrics.full_lyrics
+						log.info("YAMUSIC: Got lyrics from supplement")
+				except Exception as e:
+					log.error(f"YAMUSIC: Supplement error: {e}")
+					
+				if not lyrics_text:
+					try:
+						# Try tracks_lyrics fallback
+						client = self.get_client()
+						lyrics_obj = client.tracks_lyrics(obj.id) if client else None
+						if lyrics_obj:
+							lyrics_text = lyrics_obj.fetch_lyrics()
+							log.info("YAMUSIC: Got lyrics from tracks_lyrics")
+					except Exception as e:
+						log.error(f"YAMUSIC: tracks_lyrics error: {e}")
+
+				if not lyrics_text:
 					wx.CallAfter(ui.message, _("No lyrics available for this track."))
 					return
 					
-				text = supplement.lyrics.full_lyrics
+				text = lyrics_text
 					
 				base_folder = config.conf["yandexMusic"].get("download_folder", "").strip()
 				if not base_folder:
@@ -483,6 +506,8 @@ class YandexMusicDialog(wx.Dialog):
 					
 				wx.CallAfter(ui.message, _("Lyrics saved to: ") + filepath)
 			except Exception as e:
+				from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		import threading
@@ -519,6 +544,8 @@ class YandexMusicDialog(wx.Dialog):
 					else:
 						subprocess.Popen([player, direct_url])
 			except Exception as e:
+				from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		threading.Thread(target=load_stream).start()
@@ -574,6 +601,8 @@ class YandexMusicDialog(wx.Dialog):
 				wx.CallAfter(self._update_results, results, push_history=True)
 				wx.CallAfter(ui.message, _("Done!"))
 			except Exception as e:
+				from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		threading.Thread(target=load_my).start()
@@ -657,6 +686,8 @@ class YandexMusicDialog(wx.Dialog):
 							
 				wx.CallAfter(self._update_results, results, push_history=True)
 			except Exception as e:
+				from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		threading.Thread(target=do_search).start()
@@ -699,7 +730,9 @@ class YandexMusicDialog(wx.Dialog):
 					wx.CallAfter(self._update_results, results, push_history=True)
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
-					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
+					from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			
 			threading.Thread(target=load_artist).start()
 			
@@ -727,7 +760,9 @@ class YandexMusicDialog(wx.Dialog):
 					wx.CallAfter(self._update_results, results, push_history=True)
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
-					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
+					from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			threading.Thread(target=load_album).start()
 			
 		elif item_type == "Playlist":
@@ -747,7 +782,9 @@ class YandexMusicDialog(wx.Dialog):
 					wx.CallAfter(self._update_results, results, push_history=True)
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
-					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
+					from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			threading.Thread(target=load_playlist).start()
 			
 		elif item_type == "LikedTracks":
@@ -769,7 +806,9 @@ class YandexMusicDialog(wx.Dialog):
 					wx.CallAfter(self._update_results, results, push_history=True)
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
-					wx.CallAfter(ui.message, _("Error:") + " " + str(e))
+					from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			threading.Thread(target=load_liked).start()
 			
 		elif item_type == "Track":
@@ -937,6 +976,8 @@ class YandexMusicDialog(wx.Dialog):
 				
 			except Exception as e:
 				is_gathering[0] = False
+				from logHandler import log
+				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		threading.Thread(target=do_download).start()

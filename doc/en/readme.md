@@ -5,10 +5,12 @@ Yandex Music directly from NVDA.
 
 Features:
 1. Search for tracks, albums, artists, and playlists.
-2. Preview and listen to tracks directly without downloading (using Ctrl+P).
-3. Download high-quality MP3s (up to 320 kbps).
-4. Access your liked tracks and playlists easily.
-5. Multi-select support to download multiple tracks simultaneously.
+2. Preview and listen to tracks directly without downloading.
+3. Save track lyrics directly to text files.
+4. Download high-quality MP3s (up to 320 kbps).
+5. Access your liked tracks and playlists easily.
+6. Multi-select support to download multiple tracks simultaneously.
+7. Single-key shortcuts for rapid navigation and downloading.
 
 Full Guide on Getting a Token and Setup:
 1. Open the NVDA menu (NVDA+N).
@@ -21,7 +23,7 @@ Full Guide on Getting a Token and Setup:
 6. Paste the copied code (Ctrl+V) into the opened page and confirm.
 7. Return to NVDA. You will see a message saying "Token successfully received
    and entered!".
-8. Optional: In the "Preview Player" field, you can type the name of your
+8. In the "Preview Player" field, you can type the name of your
    favorite audio player (e.g. aimp.exe or vlc.exe) to use for streaming.
    You can also click the "Browse..." button to select the player's .exe file manually.
 9. Press the OK button to save the settings.
@@ -29,10 +31,18 @@ Full Guide on Getting a Token and Setup:
 How to use:
 Press NVDA+Shift+Y to open the Yandex Music Downloader dialog.
 Type a song or artist name in the search box and press Enter.
-Select items from the list, use Space to mark them, press the
-Applications (Context Menu) key, and select "Download".
-To preview or listen to a track without downloading, select it and
-press Ctrl+P. It will instantly start playing in your configured player.
+
+Once the results are loaded, you can interact with the list using the following keys:
+- Enter: Instantly play a track (opens your configured player) or open an album/playlist.
+- Backspace: Go back to the previous list or menu.
+- Applications Key (Context Menu): Open a menu to Download, Listen, or Save Lyrics.
+- Escape: Close the addon completely.
+
+Single-key shortcuts (when focused on the results list):
+- A: Download the selected Album
+- D: Download the selected Track
+- P: Download the selected Playlist
+- T: Save the Lyrics of the selected Track to a text file
 
 Contact:
 Email: hamzayevkomil52@gmail.com

@@ -1,47 +1,53 @@
 YaMusic Helper
 
-Yandex Music tarmog'idan o'zingiz yoqtirgan treklar, albomlar va pleylistlarni
-bevosita NVDA orqali qidiring va yuklab oling.
+Yandex Music-dan sevimli treklar, albomlar va pleylistlarni to'g'ridan-to'g'ri
+NVDA-dan qidiring va yuklab oling.
 
-Imkoniyatlari:
+Xususiyatlari:
 1. Treklar, albomlar, san'atkorlar va pleylistlarni qidirish.
-2. Qo'shiqlarni yuklab olmasdan turib darhol internetdan (pleyerda) eshitib ko'rish (Ctrl+P).
-3. Yuqori sifatli (320 kbps) MP3 formatida yuklab olish.
-4. O'zingiz yoqtirgan treklar va pleylistlarga tezkor kirish.
-5. Bir nechta treklarni birdaniga belgilash va yuklab olish.
+2. Treklarni yuklab olmasdan to'g'ridan-to'g'ri tinglash va ko'rib chiqish.
+3. Qo'shiq matnlarini (lyrics) bevosita matn fayli sifatida saqlash.
+4. Yuqori sifatli MP3-larni yuklab olish (320 kbps gacha).
+5. Yoqtirgan treklaringiz va pleylistlaringizga oson kirish.
+6. Bir vaqtning o'zida bir nechta treklarni yuklab olish imkoniyati.
+7. Tezkor boshqaruv uchun bitta harfli klaviatura tugmalari.
 
-Token olish va Sozlash bo'yicha to'liq qo'llanma:
+Token olish va Sozlash bo'yicha To'liq Qo'llanma:
 1. NVDA menyusini oching (NVDA+N).
-2. Parametrlar (Sozlamalar) bo'limidan Yandex Musiqa Sozlamalari (Yandex Music Settings) ni topib kiring.
-3. U yerda "Token Olish (Brauzerni ochish)" tugmasini bosing.
-4. Ekranda sizga maxsus tasdiqlash kodi ko'rsatiladi va bu kod avtomatik
-   ravishda xotiraga nusxalanadi. Oyna yopilgach kompyuteringizdagi asosiy
-   brauzer ochiladi.
-5. Brauzerda Yandex profilingizga kiring (agar avval kirmagan bo'lsangiz).
-6. Ochilgan maxsus sahifaga haligi xotiraga nusxalangan kodni joylang (Ctrl+V)
-   va tasdiqlash tugmasini bosing.
-7. NVDA ga qayting. Ekranda "Token muvaffaqiyatli olindi va kiritildi!" degan
-   xabar chiqadi.
-8. (Ixtiyoriy) "Eshitish Pleyeri" maydoniga sevimli pleyeringiz nomini (masalan, aimp.exe yoki vlc.exe) yozib qo'yishingiz mumkin.
-   Yoki pleyerning .exe faylini qo'lda topib ko'rsatish uchun "Tanlash..." (Browse) tugmasidan foydalaning.
+2. Sozlamalar -> Preferences -> Yandex Music Settings ga kiring.
+3. "Token Olish (Brauzerni ochish)" tugmasini bosing.
+4. Ekranda maxsus tasdiqlash kodi ko'rsatiladi va u avtomatik ravishda
+   xotiraga (clipboard) nusxalanadi. Xabarni yopganingizdan so'ng brauzer ochiladi.
+5. Agar Yandex hisobingizga kirmagan bo'lsangiz, tizimga kiring.
+6. Nusxalangan kodni ochilgan sahifaga tashlang (Ctrl+V) va tasdiqlang.
+7. NVDA ga qayting. Siz "Token muvaffaqiyatli olindi!" degan xabarni eshitasiz.
+8. "Eshitish Pleyeri" maydoniga eshitish uchun sevimli pleyeringiz
+   nomini yozishingiz mumkin (masalan, aimp.exe yoki vlc.exe). Yoki ".exe" 
+   faylni tanlash uchun "Tanlash..." tugmasini bosishingiz ham mumkin.
 9. Sozlamalarni saqlash uchun OK tugmasini bosing.
 
-Foydalanish:
-Dasturni ishga tushirish uchun NVDA+Shift+Y tugmalarini bosing.
-Qidiruv maydoniga qo'shiq yoki san'atkor nomini yozib Enter bosing.
-Ro'yxatdagi istalgan qo'shiqni eshitib ko'rish uchun Ctrl+P tugmasini bosing.
-Qo'shiqni saqlash uchun Bo'shliq (Space) tugmasi orqali
-belgilang va Ilova (Applications, probelning o'ng tomonidagi) tugmasini
-bosib "Yuklab olish"ni tanlang. Shuningdek ro'yxatda Enter bosib san'atkor
-yoki albomning ichiga kirish mumkin.
+Qanday ishlatiladi:
+Dasturni ochish uchun NVDA+Shift+Y tugmalarini bosing.
+Qidiruv maydoniga qo'shiq yoki san'atkor nomini yozing va Enter tugmasini bosing.
+
+Natijalar ro'yxati yuklangach, quyidagi tugmalar orqali qulay ishlashingiz mumkin:
+- Enter: Trekni tezkor tinglash (sozlangan pleyerda ochadi) yoki albom/pleylist ichiga kirish.
+- Backspace: Oldingi ro'yxatga yoki bosh menyuga qaytish.
+- Applications (Kontekst Menyu) tugmasi: Yuklab olish, Tinglash yoki Matnni saqlash menyusini ochadi.
+- Escape: Dasturni to'liq yopadi.
+
+Ro'yxat ichidagi tezkor harfiy tugmalar:
+- A: Tanlangan Albomni yuklab olish
+- D: Tanlangan Trekni (qo'shiqni) yuklab olish
+- P: Tanlangan Pleylistni yuklab olish
+- T: Tanlangan qo'shiq Matnini saqlab olish
 
 Aloqa:
 Email: hamzayevkomil52@gmail.com
-Telegram kanal: @it_help_uz
+Telegram Kanal: @it_help_uz
 
-Huquqiy Ogohlantirish (Disclaimer):
-Ushbu qo'shimcha faqat ta'lim va ko'zi ojiz foydalanuvchilarga qulaylik
-yaratish maqsadida ishlab chiqilgan bo'lib, Yandex LLC kompaniyasiga rasmiy
-aloqasi yo'q. Yuklab olingan barcha materiallar faqat shaxsiy maqsadlarda
-foydalanish uchun mo'ljallangan. Muallif ushbu dasturdan noto'g'ri foydalanilishi
-uchun javobgar emas.
+Ogohlantirish:
+Ushbu plagin faqat ta'lim va ko'zi ojizlarga qulaylik yaratish maqsadida ishlab chiqilgan.
+Bu norasmiy dastur bo'lib, Yandex LLC bilan rasmiy aloqasi yo'q.
+Yuklab olingan barcha materiallar faqat shaxsiy foydalanish uchun. Muallif ushbu 
+dasturdan noto'g'ri foydalanish bo'yicha javobgar emas.

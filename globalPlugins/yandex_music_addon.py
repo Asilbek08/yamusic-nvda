@@ -720,7 +720,9 @@ class YandexMusicDialog(wx.Dialog):
 
 	def _update_results(self, results, push_history=False):
 		if push_history and self.search_results:
-			self.history.append((self.search_results, self.lb_results.GetSelection()))
+			sels = self.lb_results.GetSelections()
+			sel = sels[0] if sels else wx.NOT_FOUND
+			self.history.append((self.search_results, sel))
 		self.search_results = results
 		self.lb_results.Clear()
 		if not results:

@@ -399,6 +399,8 @@ class YandexMusicDialog(wx.Dialog):
 		keycode = event.GetKeyCode()
 		if event.ControlDown() and keycode == ord('P'):
 			self.on_preview(None)
+		elif keycode in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER):
+			self.on_view(None)
 		else:
 			event.Skip()
 

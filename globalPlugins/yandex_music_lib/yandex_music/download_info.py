@@ -6,206 +6,206 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType, JSONType
+	from yandex_music import ClientType, JSONType
 
 SIGN_SALT = 'XGRlBW9FXlekgbPrRHuSiA'
 
 
 @model
 class DownloadInfo(YandexMusicModel):
-    """Класс, представляющий информацию о вариантах загрузки трека.
+	"""Класс, представляющий информацию о вариантах загрузки трека.
 
-    Attributes:
-        codec (:obj:`str`): Кодек аудиофайла.
-        bitrate_in_kbps (:obj:`int`): Битрейт аудиофайла в кбит/с.
-        gain (:obj:`bool`): Усиление TODO.
-        preview (:obj:`bool`): Предварительный просмотр TODO.
-        download_info_url (:obj:`str`): Ссылка на XML документ содержащий данные для загрузки трека.
-        direct (:obj:`bool`): Прямая ли ссылка.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-    """
+	Attributes:
+		codec (:obj:`str`): Кодек аудиофайла.
+		bitrate_in_kbps (:obj:`int`): Битрейт аудиофайла в кбит/с.
+		gain (:obj:`bool`): Усиление TODO.
+		preview (:obj:`bool`): Предварительный просмотр TODO.
+		download_info_url (:obj:`str`): Ссылка на XML документ содержащий данные для загрузки трека.
+		direct (:obj:`bool`): Прямая ли ссылка.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+	"""
 
-    codec: str
-    bitrate_in_kbps: int
-    gain: bool
-    preview: bool
-    download_info_url: str
-    direct: bool
-    client: Optional['ClientType'] = None
+	codec: str
+	bitrate_in_kbps: int
+	gain: bool
+	preview: bool
+	download_info_url: str
+	direct: bool
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self.direct_link = None
-        self._id_attrs = (self.codec, self.bitrate_in_kbps, self.gain, self.preview, self.download_info_url)
+	def __post_init__(self) -> None:
+		self.direct_link = None
+		self._id_attrs = (self.codec, self.bitrate_in_kbps, self.gain, self.preview, self.download_info_url)
 
-    @staticmethod
-    def _get_text_node_data(xml: bytes, tag: str) -> Optional[str]:
-        import re
-        match = re.search(b'<%b[^>]*>(.*?)</%b>' % (tag.encode(), tag.encode()), xml)
-        return match.group(1).decode('utf-8') if match else None
+	@staticmethod
+	def _get_text_node_data(xml: bytes, tag: str) -> Optional[str]:
+		import re
+		match = re.search(b'<%b[^>]*>(.*?)</%b>' % (tag.encode(), tag.encode()), xml)
+		return match.group(1).decode('utf-8') if match else None
 
-    def __build_direct_link(self, xml: bytes) -> str:
-        host = self._get_text_node_data(xml, 'host')
-        path = self._get_text_node_data(xml, 'path')
-        ts = self._get_text_node_data(xml, 'ts')
-        s = self._get_text_node_data(xml, 's')
-        sign = md5((SIGN_SALT + path[1::] + s).encode('UTF-8')).hexdigest()  # noqa: S324
+	def __build_direct_link(self, xml: bytes) -> str:
+		host = self._get_text_node_data(xml, 'host')
+		path = self._get_text_node_data(xml, 'path')
+		ts = self._get_text_node_data(xml, 'ts')
+		s = self._get_text_node_data(xml, 's')
+		sign = md5((SIGN_SALT + path[1::] + s).encode('UTF-8')).hexdigest()  # noqa: S324
 
-        return f'https://{host}/get-mp3/{sign}/{ts}{path}'
+		return f'https://{host}/get-mp3/{sign}/{ts}{path}'
 
-    def get_direct_link(self, **kwargs: Any) -> str:
-        """Получение прямой ссылки на загрузку из XML ответа.
+	def get_direct_link(self, **kwargs: Any) -> str:
+		"""Получение прямой ссылки на загрузку из XML ответа.
 
-        Метод доступен только одну минуту с момента получения информации о загрузке, иначе 410 ошибка!
+		Метод доступен только одну минуту с момента получения информации о загрузке, иначе 410 ошибка!
 
-        Args:
-            **kwargs: Произвольные ключевые аргументы для `requests.request`.
+		Args:
+			**kwargs: Произвольные ключевые аргументы для `requests.request`.
 
-        Returns:
-            :obj:`str`: Прямая ссылка на загрузку трека.
+		Returns:
+			:obj:`str`: Прямая ссылка на загрузку трека.
 
-        """
-        assert self.valid_client(self.client)
-        result = self.client.request.retrieve(self.download_info_url, **kwargs)
+		"""
+		assert self.valid_client(self.client)
+		result = self.client.request.retrieve(self.download_info_url, **kwargs)
 
-        self.direct_link = self.__build_direct_link(result)
+		self.direct_link = self.__build_direct_link(result)
 
-        return self.direct_link
+		return self.direct_link
 
-    async def get_direct_link_async(self, **kwargs: Any) -> str:
-        """Получение прямой ссылки на загрузку из XML ответа.
+	async def get_direct_link_async(self, **kwargs: Any) -> str:
+		"""Получение прямой ссылки на загрузку из XML ответа.
 
-        Метод доступен только одну минуту с момента получения информации о загрузке, иначе 410 ошибка!
+		Метод доступен только одну минуту с момента получения информации о загрузке, иначе 410 ошибка!
 
-        Args:
-            **kwargs: Произвольные ключевые аргументы для `aiohttp.request`.
+		Args:
+			**kwargs: Произвольные ключевые аргументы для `aiohttp.request`.
 
-        Returns:
-            :obj:`str`: Прямая ссылка на загрузку трека.
+		Returns:
+			:obj:`str`: Прямая ссылка на загрузку трека.
 
-        """
-        assert self.valid_async_client(self.client)
-        result = await self.client.request.retrieve(self.download_info_url, **kwargs)
+		"""
+		assert self.valid_async_client(self.client)
+		result = await self.client.request.retrieve(self.download_info_url, **kwargs)
 
-        self.direct_link = self.__build_direct_link(result)
+		self.direct_link = self.__build_direct_link(result)
 
-        return self.direct_link
+		return self.direct_link
 
-    def download(self, filename: str, **kwargs: Any) -> None:
-        """Загрузка трека.
+	def download(self, filename: str, **kwargs: Any) -> None:
+		"""Загрузка трека.
 
-        Args:
-            filename (:obj:`str`): Путь и(или) название файла вместе с расширением.
-            **kwargs: Произвольные ключевые аргументы для `requests.request`.
-        """
-        if self.direct_link is None:
-            self.direct_link = self.get_direct_link(**kwargs)
+		Args:
+			filename (:obj:`str`): Путь и(или) название файла вместе с расширением.
+			**kwargs: Произвольные ключевые аргументы для `requests.request`.
+		"""
+		if self.direct_link is None:
+			self.direct_link = self.get_direct_link(**kwargs)
 
-        assert self.valid_client(self.client)
-        self.client.request.download(self.direct_link, filename)
+		assert self.valid_client(self.client)
+		self.client.request.download(self.direct_link, filename)
 
-    async def download_async(self, filename: str, **kwargs: Any) -> None:
-        """Загрузка трека.
+	async def download_async(self, filename: str, **kwargs: Any) -> None:
+		"""Загрузка трека.
 
-        Args:
-            filename (:obj:`str`): Путь и(или) название файла вместе с расширением.
-            **kwargs: Произвольные ключевые аргументы для `aiohttp.request`.
-        """
-        if self.direct_link is None:
-            self.direct_link = await self.get_direct_link_async(**kwargs)
+		Args:
+			filename (:obj:`str`): Путь и(или) название файла вместе с расширением.
+			**kwargs: Произвольные ключевые аргументы для `aiohttp.request`.
+		"""
+		if self.direct_link is None:
+			self.direct_link = await self.get_direct_link_async(**kwargs)
 
-        assert self.valid_async_client(self.client)
-        await self.client.request.download(self.direct_link, filename)
+		assert self.valid_async_client(self.client)
+		await self.client.request.download(self.direct_link, filename)
 
-    def download_bytes(self) -> bytes:
-        """Загрузка трека и возврат в виде байтов.
+	def download_bytes(self) -> bytes:
+		"""Загрузка трека и возврат в виде байтов.
 
-        Returns:
-            :obj:`bytes`: Трек в виде байтов.
-        """
-        if self.direct_link is None:
-            self.direct_link = self.get_direct_link()
+		Returns:
+			:obj:`bytes`: Трек в виде байтов.
+		"""
+		if self.direct_link is None:
+			self.direct_link = self.get_direct_link()
 
-        assert self.valid_client(self.client)
-        return self.client.request.retrieve(self.direct_link)
+		assert self.valid_client(self.client)
+		return self.client.request.retrieve(self.direct_link)
 
-    async def download_bytes_async(self) -> bytes:
-        """Загрузка трека и возврат в виде байтов.
+	async def download_bytes_async(self) -> bytes:
+		"""Загрузка трека и возврат в виде байтов.
 
-        Returns:
-            :obj:`bytes`: Трек в виде байтов.
-        """
-        if self.direct_link is None:
-            self.direct_link = await self.get_direct_link_async()
+		Returns:
+			:obj:`bytes`: Трек в виде байтов.
+		"""
+		if self.direct_link is None:
+			self.direct_link = await self.get_direct_link_async()
 
-        assert self.valid_async_client(self.client)
-        return await self.client.request.retrieve(self.direct_link)
+		assert self.valid_async_client(self.client)
+		return await self.client.request.retrieve(self.direct_link)
 
-    @classmethod
-    def de_list(cls, data: 'JSONType', client: 'ClientType', get_direct_links: bool = False) -> List['DownloadInfo']:
-        """Десериализация списка объектов.
+	@classmethod
+	def de_list(cls, data: 'JSONType', client: 'ClientType', get_direct_links: bool = False) -> List['DownloadInfo']:
+		"""Десериализация списка объектов.
 
-        Args:
-            data (:obj:`list`): Список словарей с полями и значениями десериализуемого объекта.
-            get_direct_links (:obj:`bool`): Получать ли сразу прямые ссылки на загрузку.
-            client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+		Args:
+			data (:obj:`list`): Список словарей с полями и значениями десериализуемого объекта.
+			get_direct_links (:obj:`bool`): Получать ли сразу прямые ссылки на загрузку.
+			client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
 
-        Returns:
-            :obj:`list` из :obj:`yandex_music.DownloadInfo`: Варианты загрузки треков.
-        """
-        if not cls.is_array_model_data(data):
-            return []
+		Returns:
+			:obj:`list` из :obj:`yandex_music.DownloadInfo`: Варианты загрузки треков.
+		"""
+		if not cls.is_array_model_data(data):
+			return []
 
-        download_infos: List[DownloadInfo] = []
-        for raw_download_info in data:
-            download_info = cls.de_json(raw_download_info, client)
-            if download_info:
-                download_infos.append(download_info)
+		download_infos: List[DownloadInfo] = []
+		for raw_download_info in data:
+			download_info = cls.de_json(raw_download_info, client)
+			if download_info:
+				download_infos.append(download_info)
 
-        if get_direct_links:
-            for info in download_infos:
-                info.get_direct_link()
+		if get_direct_links:
+			for info in download_infos:
+				info.get_direct_link()
 
-        return download_infos
+		return download_infos
 
-    @classmethod
-    async def de_list_async(
-        cls, data: 'JSONType', client: 'ClientType', get_direct_links: bool = False
-    ) -> List['DownloadInfo']:
-        """Десериализация списка объектов.
+	@classmethod
+	async def de_list_async(
+		cls, data: 'JSONType', client: 'ClientType', get_direct_links: bool = False
+	) -> List['DownloadInfo']:
+		"""Десериализация списка объектов.
 
-        Args:
-            data (:obj:`list`): Список словарей с полями и значениями десериализуемого объекта.
-            get_direct_links (:obj:`bool`): Получать ли сразу прямые ссылки на загрузку.
-            client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+		Args:
+			data (:obj:`list`): Список словарей с полями и значениями десериализуемого объекта.
+			get_direct_links (:obj:`bool`): Получать ли сразу прямые ссылки на загрузку.
+			client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
 
-        Returns:
-            :obj:`list` из :obj:`yandex_music.DownloadInfo`: Варианты загрузки треков.
-        """
-        if not cls.is_array_model_data(data):
-            return []
+		Returns:
+			:obj:`list` из :obj:`yandex_music.DownloadInfo`: Варианты загрузки треков.
+		"""
+		if not cls.is_array_model_data(data):
+			return []
 
-        download_infos: List[DownloadInfo] = []
-        for raw_download_info in data:
-            download_info = cls.de_json(raw_download_info, client)
-            if download_info:
-                download_infos.append(download_info)
+		download_infos: List[DownloadInfo] = []
+		for raw_download_info in data:
+			download_info = cls.de_json(raw_download_info, client)
+			if download_info:
+				download_infos.append(download_info)
 
-        if get_direct_links:
-            for info in download_infos:
-                # FIXME (MarshalX): gather or something?
-                await info.get_direct_link_async()
+		if get_direct_links:
+			for info in download_infos:
+				# FIXME (MarshalX): gather or something?
+				await info.get_direct_link_async()
 
-        return download_infos
+		return download_infos
 
-    # camelCase псевдонимы
+	# camelCase псевдонимы
 
-    #: Псевдоним для :attr:`get_direct_link`
-    getDirectLink = get_direct_link
-    #: Псевдоним для :attr:`get_direct_link_async`
-    getDirectLinkAsync = get_direct_link_async
-    #: Псевдоним для :attr:`download_async`
-    downloadAsync = download_async
-    #: Псевдоним для :attr:`download_bytes`
-    downloadBytes = download_bytes
-    #: Псевдоним для :attr:`download_bytes_async`
-    downloadBytesAsync = download_bytes_async
+	#: Псевдоним для :attr:`get_direct_link`
+	getDirectLink = get_direct_link
+	#: Псевдоним для :attr:`get_direct_link_async`
+	getDirectLinkAsync = get_direct_link_async
+	#: Псевдоним для :attr:`download_async`
+	downloadAsync = download_async
+	#: Псевдоним для :attr:`download_bytes`
+	downloadBytes = download_bytes
+	#: Псевдоним для :attr:`download_bytes_async`
+	downloadBytesAsync = download_bytes_async

@@ -9,7 +9,7 @@ _T = TypeVar('_T')
 
 
 @dataclass_transform(
-    field_specifiers=(dataclasses.Field, dataclasses.field),
+	field_specifiers=(dataclasses.Field, dataclasses.field),
 )
 def model(cls: Type[_T]) -> Type[_T]:
-    return dataclasses.dataclass(eq=False, repr=False)(cls)
+	return dataclasses.dataclass(eq=False, repr=False)(cls)

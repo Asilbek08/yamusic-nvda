@@ -4,24 +4,24 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType
+	from yandex_music import ClientType
 
 
 @model
 class Ratings(YandexMusicModel):
-    """Класс, представляющий рейтинг исполнителя.
+	"""Класс, представляющий рейтинг исполнителя.
 
-    Attributes:
-        month (:obj:`int`): Значение ежемесячного рейтинга.
-        week (:obj:`int`, optional): Значение еженедельного рейтинга.
-        day (:obj:`int`, optional): Значение дневного рейтинга.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-    """
+	Attributes:
+		month (:obj:`int`): Значение ежемесячного рейтинга.
+		week (:obj:`int`, optional): Значение еженедельного рейтинга.
+		day (:obj:`int`, optional): Значение дневного рейтинга.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+	"""
 
-    month: int
-    week: Optional[int] = None
-    day: Optional[int] = None
-    client: Optional['ClientType'] = None
+	month: int
+	week: Optional[int] = None
+	day: Optional[int] = None
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self._id_attrs = (self.week, self.month)
+	def __post_init__(self) -> None:
+		self._id_attrs = (self.week, self.month)

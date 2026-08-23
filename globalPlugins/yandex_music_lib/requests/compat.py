@@ -19,15 +19,15 @@ from types import ModuleType
 # urllib3
 # -------
 from urllib3 import (
-    __version__ as urllib3_version,  # type: ignore[reportPrivateImportUsage]
+	__version__ as urllib3_version,  # type: ignore[reportPrivateImportUsage]
 )
 
 # Detect which major version of urllib3 is being used.
 try:
-    is_urllib3_1 = int(urllib3_version.split(".")[0]) == 1
+	is_urllib3_1 = int(urllib3_version.split(".")[0]) == 1
 except (TypeError, AttributeError):
-    # If we can't discern a version, prefer old functionality.
-    is_urllib3_1 = True
+	# If we can't discern a version, prefer old functionality.
+	is_urllib3_1 = True
 
 # -------------------
 # Character Detection
@@ -35,15 +35,15 @@ except (TypeError, AttributeError):
 
 
 def _resolve_char_detection() -> ModuleType | None:
-    """Find supported character detection libraries."""
-    chardet = None
-    for lib in ("chardet", "charset_normalizer"):
-        if chardet is None:
-            try:
-                chardet = importlib.import_module(lib)
-            except ImportError:
-                pass
-    return chardet
+	"""Find supported character detection libraries."""
+	chardet = None
+	for lib in ("chardet", "charset_normalizer"):
+		if chardet is None:
+			try:
+				chardet = importlib.import_module(lib)
+			except ImportError:
+				pass
+	return chardet
 
 
 chardet = _resolve_char_detection()
@@ -64,16 +64,16 @@ is_py3 = _ver[0] == 3
 # json/simplejson module import resolution
 has_simplejson = False
 try:
-    import simplejson as json  # type: ignore[import-not-found]
+	import simplejson as json  # type: ignore[import-not-found]
 
-    has_simplejson = True
+	has_simplejson = True
 except ImportError:
-    import json
+	import json
 
 if has_simplejson:
-    from simplejson import JSONDecodeError  # type: ignore[import-not-found]
+	from simplejson import JSONDecodeError  # type: ignore[import-not-found]
 else:
-    from json import JSONDecodeError
+	from json import JSONDecodeError
 
 # Keep OrderedDict for backwards compatibility.
 from collections import OrderedDict
@@ -86,23 +86,23 @@ from io import StringIO
 # Legacy Imports
 # --------------
 from urllib.parse import (
-    quote,
-    quote_plus,
-    unquote,
-    unquote_plus,
-    urldefrag,
-    urlencode,
-    urljoin,
-    urlparse,
-    urlsplit,
-    urlunparse,
+	quote,
+	quote_plus,
+	unquote,
+	unquote_plus,
+	urldefrag,
+	urlencode,
+	urljoin,
+	urlparse,
+	urlsplit,
+	urlunparse,
 )
 from urllib.request import (
-    getproxies,
-    getproxies_environment,
-    parse_http_list,
-    proxy_bypass,
-    proxy_bypass_environment,  # type: ignore[attr-defined]  # https://github.com/python/cpython/issues/145331
+	getproxies,
+	getproxies_environment,
+	parse_http_list,
+	proxy_bypass,
+	proxy_bypass_environment,  # type: ignore[attr-defined]  # https://github.com/python/cpython/issues/145331
 )
 
 builtin_str = str

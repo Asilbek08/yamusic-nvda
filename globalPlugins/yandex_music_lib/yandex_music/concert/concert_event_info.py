@@ -4,23 +4,23 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType
+	from yandex_music import ClientType
 
 
 @model
 class ConcertEventInfo(YandexMusicModel):
-    """Класс, представляющий информацию о типе события.
+	"""Класс, представляющий информацию о типе события.
 
-    Note:
-        Известные значения поля type: concert, festival.
+	Note:
+		Известные значения поля type: concert, festival.
 
-    Attributes:
-        type (:obj:`str`, optional): Тип события.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-    """
+	Attributes:
+		type (:obj:`str`, optional): Тип события.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+	"""
 
-    type: Optional[str] = None
-    client: Optional['ClientType'] = None
+	type: Optional[str] = None
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self._id_attrs = (self.type,)
+	def __post_init__(self) -> None:
+		self._id_attrs = (self.type,)

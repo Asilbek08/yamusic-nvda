@@ -9,195 +9,195 @@ from yandex_music._client import log
 from yandex_music._client_base import ClientBase
 
 if TYPE_CHECKING:
-    from yandex_music.utils.request import Request
+	from yandex_music.utils.request import Request
 
 
 class PinsMixin(ClientBase):
-    """Закреплённые.
+	"""Закреплённые.
 
-    Миксин для методов, связанных с закреплёнными элементами.
-    """
+	Миксин для методов, связанных с закреплёнными элементами.
+	"""
 
-    _request: 'Request'
+	_request: 'Request'
 
-    @log
-    def pins(self, *args: Any, **kwargs: Any) -> Optional[PinsList]:
-        """Получение списка закреплённых элементов.
+	@log
+	def pins(self, *args: Any, **kwargs: Any) -> Optional[PinsList]:
+		"""Получение списка закреплённых элементов.
 
-        Args:
-            *args: Произвольные аргументы (будут переданы в запрос).
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			*args: Произвольные аргументы (будут переданы в запрос).
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`yandex_music.PinsList` | :obj:`None`: Список закреплённых элементов или :obj:`None`.
+		Returns:
+			:obj:`yandex_music.PinsList` | :obj:`None`: Список закреплённых элементов или :obj:`None`.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pins'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pins'
 
-        result = self._request.get(url, *args, **kwargs)
+		result = self._request.get(url, *args, **kwargs)
 
-        return PinsList.de_json(result, self)
+		return PinsList.de_json(result, self)
 
-    @log
-    def pin_album(self, album_id: Union[str, int], **kwargs: Any) -> Optional[Pin]:
-        """Закрепление альбома.
+	@log
+	def pin_album(self, album_id: Union[str, int], **kwargs: Any) -> Optional[Pin]:
+		"""Закрепление альбома.
 
-        Args:
-            album_id (:obj:`str` | :obj:`int`): Уникальный идентификатор альбома.
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			album_id (:obj:`str` | :obj:`int`): Уникальный идентификатор альбома.
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`yandex_music.Pin`: Закреплённый элемент.
+		Returns:
+			:obj:`yandex_music.Pin`: Закреплённый элемент.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pin/album'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pin/album'
 
-        result = self._request.put(url, json={'id': album_id}, **kwargs)
+		result = self._request.put(url, json={'id': album_id}, **kwargs)
 
-        return Pin.de_json(result, self)
+		return Pin.de_json(result, self)
 
-    @log
-    def unpin_album(self, album_id: Union[str, int], **kwargs: Any) -> bool:
-        """Открепление альбома.
+	@log
+	def unpin_album(self, album_id: Union[str, int], **kwargs: Any) -> bool:
+		"""Открепление альбома.
 
-        Args:
-            album_id (:obj:`str` | :obj:`int`): Уникальный идентификатор альбома.
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			album_id (:obj:`str` | :obj:`int`): Уникальный идентификатор альбома.
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`bool`: :obj:`True` при успешном выполнении запроса, иначе :obj:`False`.
+		Returns:
+			:obj:`bool`: :obj:`True` при успешном выполнении запроса, иначе :obj:`False`.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pin/album'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pin/album'
 
-        result = self._request.delete(url, json={'id': album_id}, **kwargs)
+		result = self._request.delete(url, json={'id': album_id}, **kwargs)
 
-        return result == 'ok'
+		return result == 'ok'
 
-    @log
-    def pin_artist(self, artist_id: Union[str, int], **kwargs: Any) -> Optional[Pin]:
-        """Закрепление артиста.
+	@log
+	def pin_artist(self, artist_id: Union[str, int], **kwargs: Any) -> Optional[Pin]:
+		"""Закрепление артиста.
 
-        Args:
-            artist_id (:obj:`str` | :obj:`int`): Уникальный идентификатор артиста.
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			artist_id (:obj:`str` | :obj:`int`): Уникальный идентификатор артиста.
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`yandex_music.Pin`: Закреплённый элемент.
+		Returns:
+			:obj:`yandex_music.Pin`: Закреплённый элемент.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pin/artist'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pin/artist'
 
-        result = self._request.put(url, json={'id': artist_id}, **kwargs)
+		result = self._request.put(url, json={'id': artist_id}, **kwargs)
 
-        return Pin.de_json(result, self)
+		return Pin.de_json(result, self)
 
-    @log
-    def unpin_artist(self, artist_id: Union[str, int], **kwargs: Any) -> bool:
-        """Открепление артиста.
+	@log
+	def unpin_artist(self, artist_id: Union[str, int], **kwargs: Any) -> bool:
+		"""Открепление артиста.
 
-        Args:
-            artist_id (:obj:`str` | :obj:`int`): Уникальный идентификатор артиста.
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			artist_id (:obj:`str` | :obj:`int`): Уникальный идентификатор артиста.
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`bool`: :obj:`True` при успешном выполнении запроса, иначе :obj:`False`.
+		Returns:
+			:obj:`bool`: :obj:`True` при успешном выполнении запроса, иначе :obj:`False`.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pin/artist'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pin/artist'
 
-        result = self._request.delete(url, json={'id': artist_id}, **kwargs)
+		result = self._request.delete(url, json={'id': artist_id}, **kwargs)
 
-        return result == 'ok'
+		return result == 'ok'
 
-    @log
-    def pin_playlist(self, uid: Union[str, int], kind: Union[str, int], **kwargs: Any) -> Optional[Pin]:
-        """Закрепление плейлиста.
+	@log
+	def pin_playlist(self, uid: Union[str, int], kind: Union[str, int], **kwargs: Any) -> Optional[Pin]:
+		"""Закрепление плейлиста.
 
-        Args:
-            uid (:obj:`str` | :obj:`int`): Уникальный идентификатор владельца плейлиста.
-            kind (:obj:`str` | :obj:`int`): Номер плейлиста.
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			uid (:obj:`str` | :obj:`int`): Уникальный идентификатор владельца плейлиста.
+			kind (:obj:`str` | :obj:`int`): Номер плейлиста.
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`yandex_music.Pin`: Закреплённый элемент.
+		Returns:
+			:obj:`yandex_music.Pin`: Закреплённый элемент.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pin/playlist'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pin/playlist'
 
-        result = self._request.put(url, json={'uid': uid, 'kind': kind}, **kwargs)
+		result = self._request.put(url, json={'uid': uid, 'kind': kind}, **kwargs)
 
-        return Pin.de_json(result, self)
+		return Pin.de_json(result, self)
 
-    @log
-    def unpin_playlist(self, uid: Union[str, int], kind: Union[str, int], **kwargs: Any) -> bool:
-        """Открепление плейлиста.
+	@log
+	def unpin_playlist(self, uid: Union[str, int], kind: Union[str, int], **kwargs: Any) -> bool:
+		"""Открепление плейлиста.
 
-        Args:
-            uid (:obj:`str` | :obj:`int`): Уникальный идентификатор владельца плейлиста.
-            kind (:obj:`str` | :obj:`int`): Номер плейлиста.
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			uid (:obj:`str` | :obj:`int`): Уникальный идентификатор владельца плейлиста.
+			kind (:obj:`str` | :obj:`int`): Номер плейлиста.
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`bool`: :obj:`True` при успешном выполнении запроса, иначе :obj:`False`.
+		Returns:
+			:obj:`bool`: :obj:`True` при успешном выполнении запроса, иначе :obj:`False`.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pin/playlist'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pin/playlist'
 
-        result = self._request.delete(url, json={'uid': uid, 'kind': kind}, **kwargs)
+		result = self._request.delete(url, json={'uid': uid, 'kind': kind}, **kwargs)
 
-        return result == 'ok'
+		return result == 'ok'
 
-    @log
-    def pin_wave(self, seeds: str, **kwargs: Any) -> Optional[Pin]:
-        """Закрепление волны.
+	@log
+	def pin_wave(self, seeds: str, **kwargs: Any) -> Optional[Pin]:
+		"""Закрепление волны.
 
-        Args:
-            seeds (:obj:`str`): Идентификатор волны (например, "artist:12345").
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			seeds (:obj:`str`): Идентификатор волны (например, "artist:12345").
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`yandex_music.Pin`: Закреплённый элемент.
+		Returns:
+			:obj:`yandex_music.Pin`: Закреплённый элемент.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pin/wave'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pin/wave'
 
-        result = self._request.put(url, json={'seeds': seeds}, **kwargs)
+		result = self._request.put(url, json={'seeds': seeds}, **kwargs)
 
-        return Pin.de_json(result, self)
+		return Pin.de_json(result, self)
 
-    @log
-    def unpin_wave(self, seeds: str, **kwargs: Any) -> bool:
-        """Открепление волны.
+	@log
+	def unpin_wave(self, seeds: str, **kwargs: Any) -> bool:
+		"""Открепление волны.
 
-        Args:
-            seeds (:obj:`str`): Идентификатор волны.
-            **kwargs: Произвольные именованные аргументы (будут переданы в запрос).
+		Args:
+			seeds (:obj:`str`): Идентификатор волны.
+			**kwargs: Произвольные именованные аргументы (будут переданы в запрос).
 
-        Returns:
-            :obj:`bool`: :obj:`True` при успешном выполнении запроса, иначе :obj:`False`.
+		Returns:
+			:obj:`bool`: :obj:`True` при успешном выполнении запроса, иначе :obj:`False`.
 
-        Raises:
-            :class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
-        """
-        url = f'{self.base_url}/pin/wave'
+		Raises:
+			:class:`yandex_music.exceptions.YandexMusicError`: Базовое исключение библиотеки.
+		"""
+		url = f'{self.base_url}/pin/wave'
 
-        result = self._request.delete(url, json={'seeds': seeds}, **kwargs)
+		result = self._request.delete(url, json={'seeds': seeds}, **kwargs)
 
-        return result == 'ok'
+		return result == 'ok'

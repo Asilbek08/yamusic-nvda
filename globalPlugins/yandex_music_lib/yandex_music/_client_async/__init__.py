@@ -6,18 +6,18 @@ F = TypeVar('F', bound=Callable[..., Any])
 
 
 def log(method: F) -> F:
-    """Декоратор для логирования вызовов методов клиента."""
-    logger = logging.getLogger(method.__module__)
+	"""Декоратор для логирования вызовов методов клиента."""
+	logger = logging.getLogger(method.__module__)
 
-    @functools.wraps(method)
-    async def wrapper(*args: Any, **kwargs: Any) -> Any:
-        logger.debug(f'Entering: {method.__name__}')
+	@functools.wraps(method)
+	async def wrapper(*args: Any, **kwargs: Any) -> Any:
+		logger.debug(f'Entering: {method.__name__}')
 
-        result = await method(*args, **kwargs)
-        logger.debug(result)
+		result = await method(*args, **kwargs)
+		logger.debug(result)
 
-        logger.debug(f'Exiting: {method.__name__}')
+		logger.debug(f'Exiting: {method.__name__}')
 
-        return result
+		return result
 
-    return cast('F', wrapper)
+	return cast('F', wrapper)

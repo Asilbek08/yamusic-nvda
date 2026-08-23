@@ -30,16 +30,16 @@ from .utils import set_logging_handler
 from .version import VERSION, __version__
 
 __all__ = (
-    "from_fp",
-    "from_path",
-    "from_bytes",
-    "is_binary",
-    "detect",
-    "CharsetMatch",
-    "CharsetMatches",
-    "__version__",
-    "VERSION",
-    "set_logging_handler",
+	"from_fp",
+	"from_path",
+	"from_bytes",
+	"is_binary",
+	"detect",
+	"CharsetMatch",
+	"CharsetMatches",
+	"__version__",
+	"VERSION",
+	"set_logging_handler",
 )
 
 # Attach a NullHandler to the top level logger by default

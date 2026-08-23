@@ -4,20 +4,20 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType
+	from yandex_music import ClientType
 
 
 @model
 class PlaylistAvailability(YandexMusicModel):
-    """Класс, представляющий доступность трейлера плейлиста.
+	"""Класс, представляющий доступность трейлера плейлиста.
 
-    Attributes:
-        available (:obj:`bool`, optional): Доступен ли трейлер.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-    """
+	Attributes:
+		available (:obj:`bool`, optional): Доступен ли трейлер.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+	"""
 
-    available: Optional[bool] = None
-    client: Optional['ClientType'] = None
+	available: Optional[bool] = None
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self._id_attrs = (self.available,)
+	def __post_init__(self) -> None:
+		self._id_attrs = (self.available,)

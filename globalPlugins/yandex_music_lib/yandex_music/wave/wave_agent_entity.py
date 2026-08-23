@@ -4,23 +4,23 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType
+	from yandex_music import ClientType
 
 
 @model
 class WaveAgentEntity(YandexMusicModel):
-    """Класс, представляющий сущность агента волны.
+	"""Класс, представляющий сущность агента волны.
 
-    Note:
-        Известные значения поля `type`: ``album``, ``artist``.
+	Note:
+		Известные значения поля `type`: ``album``, ``artist``.
 
-    Attributes:
-        type (:obj:`str`, optional): Тип сущности.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-    """
+	Attributes:
+		type (:obj:`str`, optional): Тип сущности.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+	"""
 
-    type: Optional[str] = None
-    client: Optional['ClientType'] = None
+	type: Optional[str] = None
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self._id_attrs = (self.type,)
+	def __post_init__(self) -> None:
+		self._id_attrs = (self.type,)

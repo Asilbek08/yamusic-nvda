@@ -15,33 +15,33 @@ DEFAULT_SIGN_KEY = 'p93jhgh689SBReK6ghtw62'
 
 @dataclass
 class Sign:
-    """Подпись запроса.
+	"""Подпись запроса.
 
-    Attributes:
-        timestamp (:obj:`int`): Время создания подписи.
-        value (:obj:`str`): Подпись.
-    """
+	Attributes:
+		timestamp (:obj:`int`): Время создания подписи.
+		value (:obj:`str`): Подпись.
+	"""
 
-    timestamp: int
-    value: str
+	timestamp: int
+	value: str
 
 
 def get_sign_request(track_id: Union[int, str], key: str = DEFAULT_SIGN_KEY) -> Sign:
-    """Создает подпись для запроса.
+	"""Создает подпись для запроса.
 
-    Args:
-        track_id (:obj:`str` | :obj:`int`): Уникальный идентификатора трека.
-        key (:obj:`str`, optional): Ключ для подписи.
+	Args:
+		track_id (:obj:`str` | :obj:`int`): Уникальный идентификатора трека.
+		key (:obj:`str`, optional): Ключ для подписи.
 
-    Returns:
-        :obj:`Sign`: Подпись.
-    """
-    track_id = convert_track_id_to_number(track_id)
+	Returns:
+		:obj:`Sign`: Подпись.
+	"""
+	track_id = convert_track_id_to_number(track_id)
 
-    timestamp = int(datetime.datetime.now().timestamp())
-    message = f'{track_id}{timestamp}'
+	timestamp = int(datetime.datetime.now().timestamp())
+	message = f'{track_id}{timestamp}'
 
-    hmac_sign = hmac.new(key.encode('UTF-8'), message.encode('UTF-8'), hashlib.sha256).digest()
-    sign = base64.b64encode(hmac_sign).decode('UTF-8')
+	hmac_sign = hmac.new(key.encode('UTF-8'), message.encode('UTF-8'), hashlib.sha256).digest()
+	sign = base64.b64encode(hmac_sign).decode('UTF-8')
 
-    return Sign(timestamp, sign)
+	return Sign(timestamp, sign)

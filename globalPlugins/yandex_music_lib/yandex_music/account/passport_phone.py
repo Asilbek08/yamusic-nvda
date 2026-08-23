@@ -4,20 +4,20 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType
+	from yandex_music import ClientType
 
 
 @model
 class PassportPhone(YandexMusicModel):
-    """Класс, представляющий номер телефона пользователя.
+	"""Класс, представляющий номер телефона пользователя.
 
-    Attributes:
-        phone (:obj:`str`): Номер телефона.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-    """
+	Attributes:
+		phone (:obj:`str`): Номер телефона.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+	"""
 
-    phone: str
-    client: Optional['ClientType'] = None
+	phone: str
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self._id_attrs = (self.phone,)
+	def __post_init__(self) -> None:
+		self._id_attrs = (self.phone,)

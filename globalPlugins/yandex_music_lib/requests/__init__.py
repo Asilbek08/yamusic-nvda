@@ -23,12 +23,12 @@ Basic GET usage:
    >>> r = requests.post('https://httpbin.org/post', data=payload)
    >>> print(r.text)
    {
-     ...
-     "form": {
-       "key1": "value1",
-       "key2": "value2"
-     },
-     ...
+	 ...
+	 "form": {
+	   "key1": "value1",
+	   "key2": "value2"
+	 },
+	 ...
    }
 
 The other HTTP methods are supported - see `requests.api`. Full documentation
@@ -47,104 +47,104 @@ import urllib3
 from .exceptions import RequestsDependencyWarning
 
 try:
-    from charset_normalizer import __version__ as charset_normalizer_version
+	from charset_normalizer import __version__ as charset_normalizer_version
 except ImportError:
-    charset_normalizer_version = None
+	charset_normalizer_version = None
 
 try:
-    from chardet import __version__ as chardet_version  # type: ignore[import-not-found]
+	from chardet import __version__ as chardet_version  # type: ignore[import-not-found]
 except ImportError:
-    chardet_version = None
+	chardet_version = None
 
 
 def check_compatibility(
-    urllib3_version: str,
-    chardet_version: str | None,
-    charset_normalizer_version: str | None,
+	urllib3_version: str,
+	chardet_version: str | None,
+	charset_normalizer_version: str | None,
 ) -> None:
-    urllib3_version_list = urllib3_version.split(".")[:3]
-    assert urllib3_version_list != ["dev"]  # Verify urllib3 isn't installed from git.
+	urllib3_version_list = urllib3_version.split(".")[:3]
+	assert urllib3_version_list != ["dev"]  # Verify urllib3 isn't installed from git.
 
-    # Sometimes, urllib3 only reports its version as 16.1.
-    if len(urllib3_version_list) == 2:
-        urllib3_version_list.append("0")
+	# Sometimes, urllib3 only reports its version as 16.1.
+	if len(urllib3_version_list) == 2:
+		urllib3_version_list.append("0")
 
-    # Check urllib3 for compatibility.
-    major, minor, patch = urllib3_version_list  # noqa: F811
-    major, minor, patch = int(major), int(minor), int(patch)
-    # urllib3 >= 1.21.1
-    assert major >= 1
-    if major == 1:
-        assert minor >= 21
+	# Check urllib3 for compatibility.
+	major, minor, patch = urllib3_version_list  # noqa: F811
+	major, minor, patch = int(major), int(minor), int(patch)
+	# urllib3 >= 1.21.1
+	assert major >= 1
+	if major == 1:
+		assert minor >= 21
 
-    # Check charset_normalizer for compatibility.
-    if chardet_version:
-        major, minor, patch = chardet_version.split(".")[:3]
-        major, minor, patch = int(major), int(minor), int(patch)
-        # chardet_version >= 3.0.2, < 8.0.0
-        assert (3, 0, 2) <= (major, minor, patch) < (8, 0, 0)
-    elif charset_normalizer_version:
-        major, minor, patch = charset_normalizer_version.split(".")[:3]
-        major, minor, patch = int(major), int(minor), int(patch)
-        # charset_normalizer >= 2.0.0 < 4.0.0
-        assert (2, 0, 0) <= (major, minor, patch) < (4, 0, 0)
-    else:
-        warnings.warn(
-            "Unable to find acceptable character detection dependency "
-            "(chardet or charset_normalizer).",
-            RequestsDependencyWarning,
-        )
+	# Check charset_normalizer for compatibility.
+	if chardet_version:
+		major, minor, patch = chardet_version.split(".")[:3]
+		major, minor, patch = int(major), int(minor), int(patch)
+		# chardet_version >= 3.0.2, < 8.0.0
+		assert (3, 0, 2) <= (major, minor, patch) < (8, 0, 0)
+	elif charset_normalizer_version:
+		major, minor, patch = charset_normalizer_version.split(".")[:3]
+		major, minor, patch = int(major), int(minor), int(patch)
+		# charset_normalizer >= 2.0.0 < 4.0.0
+		assert (2, 0, 0) <= (major, minor, patch) < (4, 0, 0)
+	else:
+		warnings.warn(
+			"Unable to find acceptable character detection dependency "
+			"(chardet or charset_normalizer).",
+			RequestsDependencyWarning,
+		)
 
 
 def _check_cryptography(cryptography_version: str) -> None:
-    # cryptography < 1.3.4
-    try:
-        cryptography_version_list = list(map(int, cryptography_version.split(".")))
-    except ValueError:
-        return
+	# cryptography < 1.3.4
+	try:
+		cryptography_version_list = list(map(int, cryptography_version.split(".")))
+	except ValueError:
+		return
 
-    if cryptography_version_list < [1, 3, 4]:
-        warning = f"Old version of cryptography ({cryptography_version_list}) may cause slowdown."
-        warnings.warn(warning, RequestsDependencyWarning)
+	if cryptography_version_list < [1, 3, 4]:
+		warning = f"Old version of cryptography ({cryptography_version_list}) may cause slowdown."
+		warnings.warn(warning, RequestsDependencyWarning)
 
 
 # Check imported dependencies for compatibility.
 try:
-    check_compatibility(
-        urllib3.__version__,  # type: ignore[reportPrivateImportUsage]
-        chardet_version,  # type: ignore[reportUnknownArgumentType]
-        charset_normalizer_version,
-    )
+	check_compatibility(
+		urllib3.__version__,  # type: ignore[reportPrivateImportUsage]
+		chardet_version,  # type: ignore[reportUnknownArgumentType]
+		charset_normalizer_version,
+	)
 except (AssertionError, ValueError):
-    warnings.warn(
-        f"urllib3 ({urllib3.__version__}) or chardet "  # type: ignore[reportPrivateImportUsage]
-        f"({chardet_version})/charset_normalizer ({charset_normalizer_version}) "
-        "doesn't match a supported version!",
-        RequestsDependencyWarning,
-    )
+	warnings.warn(
+		f"urllib3 ({urllib3.__version__}) or chardet "  # type: ignore[reportPrivateImportUsage]
+		f"({chardet_version})/charset_normalizer ({charset_normalizer_version}) "
+		"doesn't match a supported version!",
+		RequestsDependencyWarning,
+	)
 
 # Attempt to enable urllib3's fallback for SNI support
 # if the standard library doesn't support SNI or the
 # 'ssl' library isn't available.
 try:
-    try:
-        import ssl
-    except ImportError:
-        ssl = None
+	try:
+		import ssl
+	except ImportError:
+		ssl = None
 
-    if not getattr(ssl, "HAS_SNI", False):
-        from urllib3.contrib import pyopenssl
+	if not getattr(ssl, "HAS_SNI", False):
+		from urllib3.contrib import pyopenssl
 
-        pyopenssl.inject_into_urllib3()
+		pyopenssl.inject_into_urllib3()
 
-        # Check cryptography version
-        from cryptography import (  # type: ignore[reportMissingImports]
-            __version__ as cryptography_version,  # type: ignore[reportUnknownVariableType]
-        )
+		# Check cryptography version
+		from cryptography import (  # type: ignore[reportMissingImports]
+			__version__ as cryptography_version,  # type: ignore[reportUnknownVariableType]
+		)
 
-        _check_cryptography(cryptography_version)  # type: ignore[reportUnknownArgumentType]
+		_check_cryptography(cryptography_version)  # type: ignore[reportUnknownArgumentType]
 except ImportError:
-    pass
+	pass
 
 # urllib3's DependencyWarnings should be silenced.
 from urllib3.exceptions import DependencyWarning
@@ -157,60 +157,60 @@ from logging import NullHandler
 
 from . import packages, utils
 from .__version__ import (
-    __author__,
-    __author_email__,
-    __build__,
-    __cake__,
-    __copyright__,
-    __description__,
-    __license__,
-    __title__,
-    __url__,
-    __version__,
+	__author__,
+	__author_email__,
+	__build__,
+	__cake__,
+	__copyright__,
+	__description__,
+	__license__,
+	__title__,
+	__url__,
+	__version__,
 )
 from .api import delete, get, head, options, patch, post, put, request
 from .exceptions import (
-    ConnectionError,
-    ConnectTimeout,
-    FileModeWarning,
-    HTTPError,
-    JSONDecodeError,
-    ReadTimeout,
-    RequestException,
-    Timeout,
-    TooManyRedirects,
-    URLRequired,
+	ConnectionError,
+	ConnectTimeout,
+	FileModeWarning,
+	HTTPError,
+	JSONDecodeError,
+	ReadTimeout,
+	RequestException,
+	Timeout,
+	TooManyRedirects,
+	URLRequired,
 )
 from .models import PreparedRequest, Request, Response
 from .sessions import Session, session
 from .status_codes import codes
 
 __all__ = (
-    "ConnectionError",
-    "ConnectTimeout",
-    "HTTPError",
-    "JSONDecodeError",
-    "PreparedRequest",
-    "ReadTimeout",
-    "Request",
-    "RequestException",
-    "Response",
-    "Session",
-    "Timeout",
-    "TooManyRedirects",
-    "URLRequired",
-    "codes",
-    "delete",
-    "get",
-    "head",
-    "options",
-    "packages",
-    "patch",
-    "post",
-    "put",
-    "request",
-    "session",
-    "utils",
+	"ConnectionError",
+	"ConnectTimeout",
+	"HTTPError",
+	"JSONDecodeError",
+	"PreparedRequest",
+	"ReadTimeout",
+	"Request",
+	"RequestException",
+	"Response",
+	"Session",
+	"Timeout",
+	"TooManyRedirects",
+	"URLRequired",
+	"codes",
+	"delete",
+	"get",
+	"head",
+	"options",
+	"packages",
+	"patch",
+	"post",
+	"put",
+	"request",
+	"session",
+	"utils",
 )
 
 logging.getLogger(__name__).addHandler(NullHandler())

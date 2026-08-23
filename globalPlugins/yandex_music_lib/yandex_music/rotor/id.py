@@ -4,26 +4,26 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType
+	from yandex_music import ClientType
 
 
 @model
 class Id(YandexMusicModel):
-    """Класс, представляющий уникальный идентификатор станции.
+	"""Класс, представляющий уникальный идентификатор станции.
 
-    Note:
-        Известные типы станций: `user`, `genre`.
+	Note:
+		Известные типы станций: `user`, `genre`.
 
-    Attributes:
-        type (:obj:`str`): Тип станции.
-        tag (:obj:`str`): Тег станции.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-        **kwargs: Произвольные ключевые аргументы полученные от API.
-    """
+	Attributes:
+		type (:obj:`str`): Тип станции.
+		tag (:obj:`str`): Тег станции.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+		**kwargs: Произвольные ключевые аргументы полученные от API.
+	"""
 
-    type: str
-    tag: str
-    client: Optional['ClientType'] = None
+	type: str
+	tag: str
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self._id_attrs = (self.type, self.tag)
+	def __post_init__(self) -> None:
+		self._id_attrs = (self.type, self.tag)

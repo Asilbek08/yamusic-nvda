@@ -4,22 +4,22 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType
+	from yandex_music import ClientType
 
 
 @model
 class ConcertLocation(YandexMusicModel):
-    """Класс, представляющий местоположение (город), доступное для фильтрации концертов.
+	"""Класс, представляющий местоположение (город), доступное для фильтрации концертов.
 
-    Attributes:
-        id (:obj:`int`, optional): Уникальный идентификатор местоположения (geoId).
-        name (:obj:`str`, optional): Название местоположения.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-    """
+	Attributes:
+		id (:obj:`int`, optional): Уникальный идентификатор местоположения (geoId).
+		name (:obj:`str`, optional): Название местоположения.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+	"""
 
-    id: Optional[int] = None
-    name: Optional[str] = None
-    client: Optional['ClientType'] = None
+	id: Optional[int] = None
+	name: Optional[str] = None
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self._id_attrs = (self.id,)
+	def __post_init__(self) -> None:
+		self._id_attrs = (self.id,)

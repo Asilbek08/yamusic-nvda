@@ -4,25 +4,25 @@ from yandex_music import YandexMusicModel
 from yandex_music.utils import model
 
 if TYPE_CHECKING:
-    from yandex_music import ClientType
+	from yandex_music import ClientType
 
 
 @model
 class Deactivation(YandexMusicModel):
-    """Класс, представляющий способы деактивации мобильной услуги.
+	"""Класс, представляющий способы деактивации мобильной услуги.
 
-    Note:
-        Известные значения поля `method`: `ussd`.
+	Note:
+		Известные значения поля `method`: `ussd`.
 
-    Attributes:
-        method (:obj:`str`): Метод отключения.
-        instructions (:obj:`str`, optional): Инструкция.
-        client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
-    """
+	Attributes:
+		method (:obj:`str`): Метод отключения.
+		instructions (:obj:`str`, optional): Инструкция.
+		client (:obj:`yandex_music.Client`, optional): Клиент Yandex Music.
+	"""
 
-    method: str
-    instructions: Optional[str] = None
-    client: Optional['ClientType'] = None
+	method: str
+	instructions: Optional[str] = None
+	client: Optional['ClientType'] = None
 
-    def __post_init__(self) -> None:
-        self._id_attrs = (self.method, self.instructions)
+	def __post_init__(self) -> None:
+		self._id_attrs = (self.method, self.instructions)

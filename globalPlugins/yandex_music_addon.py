@@ -458,15 +458,12 @@ class YandexMusicDialog(wx.Dialog):
 				client = self.get_client()
 				if not client: return
 				
-				lyrics_obj = client.tracks_lyrics(obj.id)
-				if not lyrics_obj:
+				supplement = obj.get_supplement()
+				if not supplement or not supplement.lyrics or not supplement.lyrics.full_lyrics:
 					wx.CallAfter(ui.message, _("No lyrics available for this track."))
 					return
 					
-				text = lyrics_obj.fetch_lyrics()
-				if not text:
-					wx.CallAfter(ui.message, _("No lyrics available for this track."))
-					return
+				text = supplement.lyrics.full_lyrics
 					
 				base_folder = config.conf["yandexMusic"].get("download_folder", "").strip()
 				if not base_folder:

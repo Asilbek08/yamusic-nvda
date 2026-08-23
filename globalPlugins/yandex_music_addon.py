@@ -387,8 +387,19 @@ class YandexMusicDialog(wx.Dialog):
 		self.tc_search.SetFocus()
 
 	def on_char_hook(self, event):
-		if event.GetKeyCode() == wx.WXK_ESCAPE:
+		keycode = event.GetKeyCode()
+		if keycode == wx.WXK_ESCAPE:
 			self.on_close(None)
+		elif keycode in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER):
+			if wx.Window.FindFocus() == self.lb_results:
+				self.on_view(None)
+				return
+			event.Skip()
+		elif keycode == wx.WXK_BACK:
+			if wx.Window.FindFocus() == self.lb_results:
+				self.go_back()
+				return
+			event.Skip()
 		else:
 			event.Skip()
 	def on_context_menu(self, event):

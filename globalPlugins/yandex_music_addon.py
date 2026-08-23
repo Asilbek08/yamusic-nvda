@@ -363,16 +363,9 @@ class YandexMusicDialog(wx.Dialog):
 		self.lb_results = wx.ListBox(panel, style=wx.LB_EXTENDED)
 		
 		hbox2 = wx.BoxSizer(wx.HORIZONTAL)
-		self.btn_view = wx.Button(panel, label=_("View/Open"))
-		self.btn_download = wx.Button(panel, label=_("Download Selected"))
 		self.btn_close = wx.Button(panel, label=_("Close"))
-		
-		hbox2.Add(self.btn_view, proportion=1, flag=wx.RIGHT, border=5)
-		hbox2.Add(self.btn_download, proportion=1, flag=wx.RIGHT, border=5)
 		hbox2.Add(self.btn_close, proportion=1)
 		
-		self.btn_view.Bind(wx.EVT_BUTTON, self.on_view)
-		self.btn_download.Bind(wx.EVT_BUTTON, self.on_download)
 		self.btn_close.Bind(wx.EVT_BUTTON, self.on_close)
 		
 		self.lb_results.Bind(wx.EVT_LISTBOX_DCLICK, self.on_view)

@@ -339,6 +339,7 @@ class YandexMusicDialog(wx.Dialog):
 		self.history = []
 		self._init_ui()
 		self.Bind(wx.EVT_CLOSE, self.on_close)
+		self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
 
 	def _init_ui(self):
 		panel = wx.Panel(self)
@@ -385,6 +386,11 @@ class YandexMusicDialog(wx.Dialog):
 		panel.SetSizer(vbox)
 		self.tc_search.SetFocus()
 
+	def on_char_hook(self, event):
+		if event.GetKeyCode() == wx.WXK_ESCAPE:
+			self.on_close(None)
+		else:
+			event.Skip()
 	def on_context_menu(self, event):
 		sels = self.lb_results.GetSelections()
 		if not sels: return

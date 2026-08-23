@@ -87,6 +87,9 @@ TRANSLATIONS = {
 		"Lyrics": "Qo'shiq matnlari",
 		"No lyrics available for this track.": "Bu qo'shiq uchun matn topilmadi.",
 		"Lyrics saved to: ": "Matn saqlandi: ",
+		"This is not an album.": "Bu albom emas.",
+		"This is not a track.": "Bu trek (qo'shiq) emas.",
+		"This is not a playlist.": "Bu pleylist emas.",
 		"Go Back (Backspace)": "Orqaga qaytish (Backspace)",
 		"Already at main menu": "Siz asosiy ro'yxatdasiz",
 		"Preview Player (e.g. default, aimp.exe):": "Eshitish Pleyeri (masalan: default, aimp.exe):",
@@ -154,6 +157,9 @@ TRANSLATIONS = {
 		"Lyrics": "Тексты песен",
 		"No lyrics available for this track.": "Текст этой песни не найден.",
 		"Lyrics saved to: ": "Текст сохранен в: ",
+		"This is not an album.": "Это не альбом.",
+		"This is not a track.": "Это не трек.",
+		"This is not a playlist.": "Это не плейлист.",
 		"Go Back (Backspace)": "Назад (Backspace)",
 		"Already at main menu": "Вы уже в главном меню",
 		"Preview Player (e.g. default, aimp.exe):": "Плеер (например: default, aimp.exe):",
@@ -395,6 +401,39 @@ class YandexMusicDialog(wx.Dialog):
 			if wx.Window.FindFocus() == self.lb_results:
 				self.on_view(None)
 				return
+			event.Skip()
+		elif keycode in (ord('A'), ord('a'), 1060, 1092, ord('D'), ord('d'), 1042, 1074, ord('P'), ord('p'), 1047, 1079, ord('T'), ord('t'), 1045, 1077):
+			if wx.Window.FindFocus() == self.lb_results:
+				sels = self.lb_results.GetSelections()
+				if not sels:
+					event.Skip()
+					return
+				item_type, display_text, obj = self.search_results[sels[0]]
+				
+				if keycode in (ord('A'), ord('a'), 1060, 1092):
+					if item_type == "Album":
+						self.on_download(None)
+					else:
+						wx.CallAfter(ui.message, _("This is not an album."))
+					return
+				elif keycode in (ord('D'), ord('d'), 1042, 1074):
+					if item_type == "Track" or item_type == "LikedTracks":
+						self.on_download(None)
+					else:
+						wx.CallAfter(ui.message, _("This is not a track."))
+					return
+				elif keycode in (ord('P'), ord('p'), 1047, 1079):
+					if item_type == "Playlist":
+						self.on_download(None)
+					else:
+						wx.CallAfter(ui.message, _("This is not a playlist."))
+					return
+				elif keycode in (ord('T'), ord('t'), 1045, 1077):
+					if item_type == "Track":
+						self.on_save_lyrics(None)
+					else:
+						wx.CallAfter(ui.message, _("This is not a track."))
+					return
 			event.Skip()
 		elif keycode == wx.WXK_BACK:
 			if wx.Window.FindFocus() == self.lb_results:

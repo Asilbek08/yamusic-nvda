@@ -83,6 +83,10 @@ TRANSLATIONS = {
 		"Disclaimer & Terms of Use": "Ogohlantirish va Foydalanish shartlari",
 		"DISCLAIMER_TEXT": "OGOHLANTIRISH: Ushbu qo'shimcha faqat ta'lim va ko'zi ojiz foydalanuvchilarga qulaylik yaratish maqsadida ishlab chiqilgan bo'lib, Yandex LLC kompaniyasiga rasmiy aloqasi yo'q. Yuklab olingan barcha materiallar faqat shaxsiy maqsadlarda foydalanish uchun mo'ljallangan. Muallif ushbu dasturdan noto'g'ri foydalanilishi uchun javobgar emas.\n\nUshbu shartlarga rozimisiz?",
 		"Preview / Listen": "Tinglash",
+		"Save Lyrics": "Qo'shiq matnini saqlash",
+		"Lyrics": "Qo'shiq matnlari",
+		"No lyrics available for this track.": "Bu qo'shiq uchun matn topilmadi.",
+		"Lyrics saved to: ": "Matn saqlandi: ",
 		"Go Back (Backspace)": "Orqaga qaytish (Backspace)",
 		"Already at main menu": "Siz asosiy ro'yxatdasiz",
 		"Preview Player (e.g. default, aimp.exe):": "Eshitish Pleyeri (masalan: default, aimp.exe):",
@@ -146,6 +150,10 @@ TRANSLATIONS = {
 		"Disclaimer & Terms of Use": "Правовое уведомление и Условия",
 		"DISCLAIMER_TEXT": "ВНИМАНИЕ: Данное дополнение разработано исключительно в образовательных целях и для удобства незрячих пользователей. Оно является неофициальным клиентом и не имеет официального отношения к компании Яндекс. Все скачанные материалы предназначены только для личного использования. Автор не несет ответственности за любое неправомерное использование.\n\nВы принимаете эти условия?",
 		"Preview / Listen": "Tinglash",
+		"Save Lyrics": "Qo'shiq matnini saqlash",
+		"Lyrics": "Qo'shiq matnlari",
+		"No lyrics available for this track.": "Bu qo'shiq uchun matn topilmadi.",
+		"Lyrics saved to: ": "Matn saqlandi: ",
 		"Go Back (Backspace)": "Orqaga qaytish (Backspace)",
 		"Already at main menu": "Siz asosiy ro'yxatdasiz",
 		"Preview Player (e.g. default, aimp.exe):": "Плеер (например: default, aimp.exe):",
@@ -416,6 +424,9 @@ class YandexMusicDialog(wx.Dialog):
 			item_preview = menu.Append(wx.ID_ANY, _("Preview / Listen"))
 			self.Bind(wx.EVT_MENU, self.on_preview, item_preview)
 			
+			item_lyrics = menu.Append(wx.ID_ANY, _("Save Lyrics"))
+			self.Bind(wx.EVT_MENU, self.on_save_lyrics, item_lyrics)
+			
 		item_download = menu.Append(wx.ID_ANY, _("Download Selected"))
 		self.Bind(wx.EVT_MENU, self.on_download, item_download)
 		
@@ -432,6 +443,53 @@ class YandexMusicDialog(wx.Dialog):
 			self.go_back()
 		else:
 			event.Skip()
+
+	def on_save_lyrics(self, event):
+		sels = self.lb_results.GetSelections()
+		if not sels: return
+		sel = sels[0]
+		item_type, display_text, obj = self.search_results[sel]
+		
+		if item_type != "Track":
+			return
+			
+		def do_save():
+			try:
+				client = self.get_client()
+				if not client: return
+				
+				lyrics_obj = client.tracks_lyrics(obj.id)
+				if not lyrics_obj:
+					wx.CallAfter(ui.message, _("No lyrics available for this track."))
+					return
+					
+				text = lyrics_obj.fetch_lyrics()
+				if not text:
+					wx.CallAfter(ui.message, _("No lyrics available for this track."))
+					return
+					
+				base_folder = config.conf["yandexMusic"].get("download_folder", "").strip()
+				if not base_folder:
+					import os
+					base_folder = os.path.join(os.path.expanduser("~"), "Downloads", "YandexMusic")
+				
+				lyrics_folder = os.path.join(base_folder, _("Lyrics"))
+				if not os.path.exists(lyrics_folder):
+					os.makedirs(lyrics_folder)
+					
+				import re
+				safe_title = re.sub(r'[\\/*?:"<>|]', "", display_text).strip()
+				filepath = os.path.join(lyrics_folder, f"{safe_title}.txt")
+				
+				with open(filepath, "w", encoding="utf-8") as f:
+					f.write(text)
+					
+				wx.CallAfter(ui.message, _("Lyrics saved to: ") + filepath)
+			except Exception as e:
+				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
+				
+		import threading
+		threading.Thread(target=do_save).start()
 
 	def on_preview(self, event):
 		sels = self.lb_results.GetSelections()

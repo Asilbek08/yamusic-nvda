@@ -685,7 +685,7 @@ class YandexMusicDialog(wx.Dialog):
 						
 						p = None
 						if match1:
-							p = client.users_playlists(kind=match1.group(2), uid=match1.group(1))
+							p = client.users_playlists(kind=match1.group(2), user_id=match1.group(1))
 						elif match2:
 							kind = match2.group(1)
 							try:
@@ -694,7 +694,7 @@ class YandexMusicDialog(wx.Dialog):
 								html = urllib.request.urlopen(req).read().decode('utf-8')
 								m = re.search(r'"uid"\s*:\s*(\d+)', html)
 								if m:
-									p = client.users_playlists(kind=kind, uid=m.group(1))
+									p = client.users_playlists(kind=kind, user_id=m.group(1))
 							except Exception:
 								pass
 								
@@ -812,7 +812,7 @@ class YandexMusicDialog(wx.Dialog):
 					client = self.get_client()
 					if not client: return
 					results = []
-					full_playlist = client.users_playlists(kind=obj.kind, uid=obj.uid)
+					full_playlist = client.users_playlists(kind=obj.kind, user_id=obj.uid)
 					for short_track in full_playlist.tracks:
 						track = short_track.track
 						if track:
@@ -931,7 +931,7 @@ class YandexMusicDialog(wx.Dialog):
 								tracks_to_download.append((track, t_path))
 								
 					elif item_type == "Playlist":
-						full_playlist = client.users_playlists(kind=obj.kind, uid=obj.uid)
+						full_playlist = client.users_playlists(kind=obj.kind, user_id=obj.uid)
 						playlist_dir_name = f"Playlist - {obj.title}"
 						playlist_dir_name = "".join(c for c in playlist_dir_name if c not in r'\/:*?"<>|')
 						playlist_path = os.path.join(download_dir, playlist_dir_name)

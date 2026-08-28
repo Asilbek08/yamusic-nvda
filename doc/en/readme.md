@@ -1,4 +1,4 @@
-YaMusic Helper
+# YaMusic Helper v2.0
 
 Search and download your favorite tracks, albums, and playlists from
 Yandex Music directly from NVDA.

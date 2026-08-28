@@ -197,10 +197,12 @@ def check_disclaimer():
 	if config.conf["yandexMusic"].get("accepted_disclaimer", False):
 		return True
 	
+	# Translators: UI message for DISCLAIMER_TEXT
 	msg = _("DISCLAIMER_TEXT")
 	if msg == "DISCLAIMER_TEXT":
 		msg = "DISCLAIMER: This addon is developed solely for educational and accessibility purposes. It is an unofficial client and has no official affiliation with Yandex LLC. All downloaded materials are for personal use only. The author is not responsible for any misuse of this tool.\n\nDo you accept these terms?"
 		
+	# Translators: UI message for Disclaimer & Terms of Use
 	res = wx.MessageBox(msg, _("Disclaimer & Terms of Use"), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_WARNING)
 	if res == wx.YES:
 		config.conf["yandexMusic"]["accepted_disclaimer"] = True
@@ -209,18 +211,23 @@ def check_disclaimer():
 
 
 class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
+	# Translators: UI message for Yandex Music Settings
 	title = _("Yandex Music Settings")
 
 	def makeSettings(self, settingsSizer):
 		sHelper = gui.guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
 		
+		# Translators: UI message for Yandex Token (Required):
 		self.tokenCtrl = sHelper.addLabeledControl(_("Yandex Token (Required):"), wx.TextCtrl, style=wx.TE_PASSWORD)
 		self.tokenCtrl.SetValue(config.conf["yandexMusic"]["token"])
 		
 		# Token tugmalari
 		btnSizer = wx.BoxSizer(wx.HORIZONTAL)
+		# Translators: UI message for Get Token (Open Browser)
 		self.btnGetToken = wx.Button(self, label=_("Get Token (Open Browser)"))
+		# Translators: UI message for Copy Token
 		self.btnCopyToken = wx.Button(self, label=_("Copy Token"))
+		# Translators: UI message for Check Token Validity
 		self.btnCheckToken = wx.Button(self, label=_("Check Token Validity"))
 		btnSizer.Add(self.btnGetToken, flag=wx.RIGHT, border=5)
 		btnSizer.Add(self.btnCopyToken, flag=wx.RIGHT, border=5)
@@ -231,17 +238,20 @@ class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
 		self.btnCopyToken.Bind(wx.EVT_BUTTON, self.onCopyToken)
 		self.btnCheckToken.Bind(wx.EVT_BUTTON, self.onCheckToken)
 		
+		# Translators: UI message for Download Folder:
 		self.outFolderCtrl = sHelper.addLabeledControl(_("Download Folder:"), wx.TextCtrl)
 		default_folder = os.path.join(os.path.expanduser("~"), "Downloads", "YandexMusic")
 		current_folder = config.conf["yandexMusic"]["download_folder"]
 		self.outFolderCtrl.SetValue(current_folder if current_folder else default_folder)
 		
 		self.bitrateChoice = sHelper.addLabeledControl(
+			# Translators: UI message for Bitrate Quality:
 			_("Bitrate Quality:"), wx.Choice, choices=["192 kbps", "320 kbps"]
 		)
 		self.bitrateChoice.SetSelection(0 if config.conf["yandexMusic"]["bitrate"] == 192 else 1)
 		
 		# Player selection
+		# Translators: UI message for Preview Player (e.g. default, aimp.exe):
 		lbl_player = wx.StaticText(self, label=_("Preview Player (e.g. default, aimp.exe):"))
 		sHelper.addItem(lbl_player)
 		
@@ -249,6 +259,7 @@ class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
 		self.previewPlayerCtrl = wx.TextCtrl(self)
 		self.previewPlayerCtrl.SetValue(config.conf["yandexMusic"].get("preview_player", "default"))
 		
+		# Translators: UI message for Browse...
 		self.btnBrowsePlayer = wx.Button(self, label=_("Browse..."))
 		self.btnBrowsePlayer.Bind(wx.EVT_BUTTON, self.onBrowsePlayer)
 		
@@ -257,6 +268,7 @@ class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
 		sHelper.addItem(player_sizer)
 
 	def onBrowsePlayer(self, event):
+		# Translators: UI message for Select Player Executable
 		with wx.FileDialog(self, _("Select Player Executable"), wildcard="Executable files (*.exe)|*.exe",
 						   style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 			if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -273,14 +285,17 @@ class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
 				client = Client()
 				
 				def on_code(code):
+					# Translators: UI message for Browser will open for Yandex token...\n\nConfirmation code to enter: {code}\n\nThis code is automatically copied to clipboard! \nPaste and confirm it in the browser.
 					msg = _("Browser will open for Yandex token...\n\nConfirmation code to enter: {code}\n\nThis code is automatically copied to clipboard! \nPaste and confirm it in the browser.").format(code=code.user_code)
 					
 					def ui_update():
 						try:
 							api.copyToClip(code.user_code)
+							# Translators: UI message for Info
 							wx.MessageBox(msg, _("Info"), wx.OK | wx.ICON_INFORMATION)
 							webbrowser.open(code.verification_url)
 						except Exception as inner_e:
+							# Translators: UI message for UI error: 
 							wx.MessageBox(_("UI error: ") + str(inner_e), _("Error"), wx.OK | wx.ICON_ERROR)
 							
 					wx.CallAfter(ui_update)
@@ -290,12 +305,14 @@ class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
 				
 				def on_success():
 					self.tokenCtrl.SetValue(access_token)
+					# Translators: UI message for Token successfully received and entered!
 					wx.MessageBox(_("Token successfully received and entered!"), _("Success"), wx.OK | wx.ICON_INFORMATION)
 				wx.CallAfter(on_success)
 				
 			except Exception as e:
 				import traceback
 				err_str = str(e) + "\n" + traceback.format_exc()
+				# Translators: UI message for An error occurred:\n
 				wx.CallAfter(lambda err=err_str: wx.MessageBox(_("An error occurred:\n") + err, _("Error"), wx.OK | wx.ICON_ERROR))
 
 		threading.Thread(target=thread_func).start()
@@ -303,22 +320,27 @@ class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
 	def onCopyToken(self, event):
 		token = self.tokenCtrl.GetValue().strip()
 		if not token:
+			# Translators: UI message for Please enter a token first!
 			wx.MessageBox(_("Please enter a token first!"), _("Error"), wx.OK | wx.ICON_ERROR)
 			return
 		try:
 			import api
 			api.copyToClip(token)
+			# Translators: UI message for Token copied to clipboard!
 			wx.MessageBox(_("Token copied to clipboard!"), _("Success"), wx.OK | wx.ICON_INFORMATION)
 		except Exception as e:
+			# Translators: UI message for UI error: 
 			wx.MessageBox(_("UI error: ") + str(e), _("Error"), wx.OK | wx.ICON_ERROR)
 
 	def onCheckToken(self, event):
 		token = self.tokenCtrl.GetValue().strip()
 		if not token:
+			# Translators: UI message for Please enter a token first!
 			wx.MessageBox(_("Please enter a token first!"), _("Error"), wx.OK | wx.ICON_ERROR)
 			return
 			
 		self.btnCheckToken.Disable()
+		# Translators: UI message for Checking...
 		self.btnCheckToken.SetLabel(_("Checking..."))
 		
 		def check():
@@ -326,13 +348,17 @@ class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
 				client = Client(token).init()
 				account = client.me.account
 				name = account.full_name or account.login or "User"
+				# Translators: UI message for Token is Valid! Account: 
 				msg = f"{_('Token is Valid! Account: ')} {name}"
+				# Translators: UI message for Success
 				wx.CallAfter(wx.MessageBox, msg, _("Success"), wx.OK | wx.ICON_INFORMATION)
 			except Exception as e:
+				# Translators: UI message for Token is Invalid!
 				wx.CallAfter(wx.MessageBox, f"{_('Token is Invalid!')}\n\n{str(e)}", _("Error"), wx.OK | wx.ICON_ERROR)
 			finally:
 				def restore():
 					self.btnCheckToken.Enable()
+					# Translators: UI message for Check Token Validity
 					self.btnCheckToken.SetLabel(_("Check Token Validity"))
 				wx.CallAfter(restore)
 				
@@ -347,6 +373,7 @@ class YandexMusicSettingsPanel(gui.settingsDialogs.SettingsPanel):
 
 class YandexMusicDialog(wx.Dialog):
 	def __init__(self, parent):
+		# Translators: UI message for Yandex Music Downloader
 		super(YandexMusicDialog, self).__init__(parent, title=_("Yandex Music Downloader"), size=(500, 500))
 		self.client = None
 		self.search_results = []
@@ -360,9 +387,12 @@ class YandexMusicDialog(wx.Dialog):
 		vbox = wx.BoxSizer(wx.VERTICAL)
 		
 		hbox1 = wx.BoxSizer(wx.HORIZONTAL)
+		# Translators: UI message for Search:
 		lbl_search = wx.StaticText(panel, label=_("Search:"))
 		self.tc_search = wx.TextCtrl(panel, style=wx.TE_PROCESS_ENTER)
+		# Translators: UI message for Search
 		self.btn_search = wx.Button(panel, label=_("Search"))
+		# Translators: UI message for My Music
 		self.btn_my_music = wx.Button(panel, label=_("My Music"))
 		
 		hbox1.Add(lbl_search, flag=wx.RIGHT, border=8)
@@ -377,6 +407,7 @@ class YandexMusicDialog(wx.Dialog):
 		self.lb_results = wx.ListBox(panel, style=wx.LB_EXTENDED)
 		
 		hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+		# Translators: UI message for Close
 		self.btn_close = wx.Button(panel, label=_("Close"))
 		hbox2.Add(self.btn_close, proportion=1)
 		
@@ -414,24 +445,28 @@ class YandexMusicDialog(wx.Dialog):
 					if item_type == "Album":
 						self.on_download(None)
 					else:
+						# Translators: UI message for This is not an album.
 						wx.CallAfter(ui.message, _("This is not an album."))
 					return
 				elif keycode in (ord('D'), ord('d'), 1042, 1074):
 					if item_type == "Track" or item_type == "LikedTracks":
 						self.on_download(None)
 					else:
+						# Translators: UI message for This is not a track.
 						wx.CallAfter(ui.message, _("This is not a track."))
 					return
 				elif keycode in (ord('P'), ord('p'), 1047, 1079):
 					if item_type == "Playlist":
 						self.on_download(None)
 					else:
+						# Translators: UI message for This is not a playlist.
 						wx.CallAfter(ui.message, _("This is not a playlist."))
 					return
 				elif keycode in (ord('T'), ord('t'), 1045, 1077):
 					if item_type == "Track":
 						self.on_save_lyrics(None)
 					else:
+						# Translators: UI message for This is not a track.
 						wx.CallAfter(ui.message, _("This is not a track."))
 					return
 			event.Skip()
@@ -452,20 +487,25 @@ class YandexMusicDialog(wx.Dialog):
 		menu = wx.Menu()
 		
 		if self.history:
+			# Translators: UI message for Go Back (Backspace)
 			item_back = menu.Append(wx.ID_ANY, _("Go Back (Backspace)"))
 			self.Bind(wx.EVT_MENU, lambda e: self.go_back(), item_back)
 			
 		if item_type != "Track":
+			# Translators: UI message for View/Open
 			item_view = menu.Append(wx.ID_ANY, _("View/Open"))
 			self.Bind(wx.EVT_MENU, self.on_view, item_view)
 			
 		if item_type == "Track":
+			# Translators: UI message for Preview / Listen
 			item_preview = menu.Append(wx.ID_ANY, _("Preview / Listen"))
 			self.Bind(wx.EVT_MENU, self.on_preview, item_preview)
 			
+			# Translators: UI message for Save Lyrics
 			item_lyrics = menu.Append(wx.ID_ANY, _("Save Lyrics"))
 			self.Bind(wx.EVT_MENU, self.on_save_lyrics, item_lyrics)
 			
+		# Translators: UI message for Download Selected
 		item_download = menu.Append(wx.ID_ANY, _("Download Selected"))
 		self.Bind(wx.EVT_MENU, self.on_download, item_download)
 		
@@ -522,6 +562,7 @@ class YandexMusicDialog(wx.Dialog):
 						log.error(f"YAMUSIC: tracks_lyrics error: {e}")
 
 				if not lyrics_text:
+					# Translators: UI message for No lyrics available for this track.
 					wx.CallAfter(ui.message, _("No lyrics available for this track."))
 					return
 					
@@ -533,6 +574,7 @@ class YandexMusicDialog(wx.Dialog):
 				if not base_folder:
 					base_folder = os.path.join(os.path.expanduser("~"), "Downloads", "YandexMusic")
 				
+				# Translators: UI message for Lyrics
 				lyrics_folder = os.path.join(base_folder, _("Lyrics"))
 				if not os.path.exists(lyrics_folder):
 					os.makedirs(lyrics_folder)
@@ -543,10 +585,12 @@ class YandexMusicDialog(wx.Dialog):
 				with open(filepath, "w", encoding="utf-8") as f:
 					f.write(text)
 					
+				# Translators: UI message for Lyrics saved to: 
 				wx.CallAfter(ui.message, _("Lyrics saved to: ") + filepath)
 			except Exception as e:
 				from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		import threading
@@ -560,9 +604,11 @@ class YandexMusicDialog(wx.Dialog):
 		item_type, display_text, obj = self.search_results[sel]
 		
 		if item_type != "Track":
+			# Translators: UI message for You can only preview tracks.
 			ui.message(_("You can only preview tracks."))
 			return
 			
+		# Translators: UI message for Loading stream...
 		ui.message(_("Loading stream..."))
 		def load_stream():
 			try:
@@ -585,12 +631,14 @@ class YandexMusicDialog(wx.Dialog):
 			except Exception as e:
 				from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		threading.Thread(target=load_stream).start()
 
 	def go_back(self):
 		if not self.history:
+			# Translators: UI message for Already at main menu
 			ui.message(_("Already at main menu"))
 			return
 		prev_results, prev_sel = self.history.pop()
@@ -606,16 +654,19 @@ class YandexMusicDialog(wx.Dialog):
 	def get_client(self):
 		token = config.conf["yandexMusic"]["token"].strip()
 		if not token:
+			# Translators: UI message for Please enter a token first!
 			ui.message(_("Please enter a token first!"))
 			return None
 		try:
 			return Client(token).init()
 		except Exception:
+			# Translators: UI message for Token is Invalid!
 			ui.message(_("Token is Invalid!"))
 			return None
 
 	def on_my_music(self, event):
 		self.history = []
+		# Translators: UI message for Loading profile...
 		ui.message(_("Loading profile..."))
 		
 		def load_my():
@@ -623,11 +674,13 @@ class YandexMusicDialog(wx.Dialog):
 				client = self.get_client()
 				if not client: return
 				results = []
+				# Translators: UI message for [My] Liked Tracks
 				results.append(("LikedTracks", _("[My] Liked Tracks"), None))
 				
 				my_playlists = client.users_playlists_list()
 				if my_playlists:
 					for p in my_playlists:
+						# Translators: UI message for [My Playlist]
 						results.append(("Playlist", f"{_('[My Playlist]')} {p.title}", p))
 						
 				liked_albums = client.users_likes_albums()
@@ -635,13 +688,16 @@ class YandexMusicDialog(wx.Dialog):
 					for la in liked_albums[:15]:
 						a = la.album
 						artist = a.artists[0].name if a.artists else "Unknown"
+						# Translators: UI message for [Liked Album]
 						results.append(("Album", f"{_('[Liked Album]')} {artist} - {a.title}", a))
 						
 				wx.CallAfter(self._update_results, results, push_history=True)
+				# Translators: UI message for Done!
 				wx.CallAfter(ui.message, _("Done!"))
 			except Exception as e:
 				from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		threading.Thread(target=load_my).start()
@@ -650,6 +706,7 @@ class YandexMusicDialog(wx.Dialog):
 		query = self.tc_search.GetValue().strip()
 		if not query: return
 		
+		# Translators: UI message for Searching...
 		ui.message(_("Searching..."))
 		self.lb_results.Clear()
 		self.search_results = []
@@ -667,17 +724,20 @@ class YandexMusicDialog(wx.Dialog):
 						if match:
 							t = client.tracks([match.group(1)])[0]
 							artist = t.artists[0].name if t.artists else "Unknown"
+							# Translators: UI message for Track
 							results.append(("Track", f"[{_('Track')}] {artist} - {t.title}", t))
 					elif "/album/" in query:
 						match = re.search(r'/album/(\d+)', query)
 						if match:
 							a = client.albums([match.group(1)])[0]
 							artist = a.artists[0].name if a.artists else "Unknown"
+							# Translators: UI message for Album
 							results.append(("Album", f"[{_('Album')}] {artist} - {a.title}", a))
 					elif "/artist/" in query:
 						match = re.search(r'/artist/(\d+)', query)
 						if match:
 							art = client.artists([match.group(1)])[0]
+							# Translators: UI message for Artist
 							results.append(("Artist", f"[{_('Artist')}] {art.name}", art))
 					elif "/playlists/" in query:
 						match1 = re.search(r'/users/([^/]+)/playlists/([a-zA-Z0-9.\-]+)', query)
@@ -700,33 +760,39 @@ class YandexMusicDialog(wx.Dialog):
 								
 						if p:
 							owner = p.owner.name if p.owner else "Unknown"
+							# Translators: UI message for Playlist
 							results.append(("Playlist", f"[{_('Playlist')}] {owner} - {p.title}", p))
 				else:
 					res = client.search(query)
 					
 					if res.artists:
 						for art in res.artists.results[:5]:
+							# Translators: UI message for Artist
 							results.append(("Artist", f"[{_('Artist')}] {art.name}", art))
 							
 					if res.tracks:
 						for t in res.tracks.results[:8]:
 							artist = t.artists[0].name if t.artists else "Unknown"
+							# Translators: UI message for Track
 							results.append(("Track", f"[{_('Track')}] {artist} - {t.title}", t))
 							
 					if res.albums:
 						for a in res.albums.results[:5]:
 							artist = a.artists[0].name if a.artists else "Unknown"
+							# Translators: UI message for Album
 							results.append(("Album", f"[{_('Album')}] {artist} - {a.title}", a))
 							
 					if res.playlists:
 						for p in res.playlists.results[:5]:
 							owner = p.owner.name if p.owner else "Unknown"
+							# Translators: UI message for Playlist
 							results.append(("Playlist", f"[{_('Playlist')}] {owner} - {p.title}", p))
 							
 				wx.CallAfter(self._update_results, results, push_history=True)
 			except Exception as e:
 				from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		threading.Thread(target=do_search).start()
@@ -739,6 +805,7 @@ class YandexMusicDialog(wx.Dialog):
 		item_type, display_text, obj = self.search_results[sel]
 		
 		if item_type == "Artist":
+			# Translators: UI message for Loading profile...
 			ui.message(_("Loading profile..."))
 			
 			def load_artist():
@@ -750,6 +817,7 @@ class YandexMusicDialog(wx.Dialog):
 						albums_res = client.artists_direct_albums(obj.id)
 						albums = getattr(albums_res, 'albums', albums_res) or []
 						for a in list(albums)[:15]:
+							# Translators: UI message for Album
 							results.append(("Album", f"[{_('Album')}] {a.title}", a))
 					except Exception:
 						pass
@@ -758,24 +826,29 @@ class YandexMusicDialog(wx.Dialog):
 						tracks_res = client.artists_tracks(obj.id)
 						tracks = getattr(tracks_res, 'tracks', tracks_res) or []
 						for t in list(tracks)[:15]:
+							# Translators: UI message for Track
 							results.append(("Track", f"[{_('Track')}] {t.title}", t))
 					except Exception:
 						pass
 						
 					if not results:
+						# Translators: UI message for No results
 						wx.CallAfter(ui.message, _("No results"))
 						return
 						
 					wx.CallAfter(self._update_results, results, push_history=True)
+					# Translators: UI message for Done!
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
 					from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			
 			threading.Thread(target=load_artist).start()
 			
 		elif item_type == "Album":
+			# Translators: UI message for Loading profile...
 			ui.message(_("Loading profile..."))
 			
 			def load_album():
@@ -791,20 +864,25 @@ class YandexMusicDialog(wx.Dialog):
 						for vol in full_album.volumes:
 							for track in vol:
 								artist = track.artists[0].name if track.artists else "Unknown"
+								# Translators: UI message for Track
 								results.append(("Track", f"[{_('Track')}] {artist} - {track.title}", track))
 					else:
+						# Translators: UI message for No tracks found in this album.
 						wx.CallAfter(ui.message, _("No tracks found in this album."))
 						return
 						
 					wx.CallAfter(self._update_results, results, push_history=True)
+					# Translators: UI message for Done!
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
 					from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			threading.Thread(target=load_album).start()
 			
 		elif item_type == "Playlist":
+			# Translators: UI message for Loading profile...
 			ui.message(_("Loading profile..."))
 			
 			def load_playlist():
@@ -817,16 +895,20 @@ class YandexMusicDialog(wx.Dialog):
 						track = short_track.track
 						if track:
 							artist = track.artists[0].name if track.artists else "Unknown"
+							# Translators: UI message for Track
 							results.append(("Track", f"[{_('Track')}] {artist} - {track.title}", track))
 					wx.CallAfter(self._update_results, results, push_history=True)
+					# Translators: UI message for Done!
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
 					from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			threading.Thread(target=load_playlist).start()
 			
 		elif item_type == "LikedTracks":
+			# Translators: UI message for Loading profile...
 			ui.message(_("Loading profile..."))
 			
 			def load_liked():
@@ -839,20 +921,24 @@ class YandexMusicDialog(wx.Dialog):
 						try:
 							track = client.tracks([short_track.id])[0]
 							artist = track.artists[0].name if track.artists else "Unknown"
+							# Translators: UI message for Track
 							results.append(("Track", f"[{_('Track')}] {artist} - {track.title}", track))
 						except:
 							pass
 					wx.CallAfter(self._update_results, results, push_history=True)
+					# Translators: UI message for Done!
 					wx.CallAfter(ui.message, _("Done!"))
 				except Exception as e:
 					from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 			threading.Thread(target=load_liked).start()
 			
 		elif item_type == "Track":
 			self.on_preview(None)
 		else:
+			# Translators: UI message for Cannot view this item.
 			wx.CallAfter(ui.message, _("Cannot view this item."))
 
 	def _update_results(self, results, push_history=False):
@@ -863,6 +949,7 @@ class YandexMusicDialog(wx.Dialog):
 		self.search_results = results
 		self.lb_results.Clear()
 		if not results:
+			# Translators: UI message for No results
 			ui.message(_("No results"))
 			return
 			
@@ -879,6 +966,7 @@ class YandexMusicDialog(wx.Dialog):
 		
 		for sel in sels:
 			if self.search_results[sel][0] == "Artist":
+				# Translators: UI message for Please open the artist first, then download albums.
 				ui.message(_("Please open the artist first, then download albums."))
 				return
 			
@@ -889,6 +977,7 @@ class YandexMusicDialog(wx.Dialog):
 			os.makedirs(download_dir)
 			
 		bitrate = config.conf["yandexMusic"]["bitrate"]
+		# Translators: UI message for Downloading...
 		ui.message(_("Downloading..."))
 		
 		def do_download():
@@ -948,6 +1037,7 @@ class YandexMusicDialog(wx.Dialog):
 					elif item_type == "LikedTracks":
 						tracks_info = client.users_likes_tracks().tracks
 						
+						# Translators: UI message for My Liked Tracks
 						liked_dir_name = _("My Liked Tracks")
 						liked_path = os.path.join(download_dir, liked_dir_name)
 						if not os.path.exists(liked_path):
@@ -967,13 +1057,16 @@ class YandexMusicDialog(wx.Dialog):
 				total = len(tracks_to_download)
 				
 				if total == 0:
+					# Translators: UI message for No results
 					wx.CallAfter(ui.message, _("No results"))
 					return
 					
 				dlg = [None]
 				def show_dlg():
 					dlg[0] = wx.ProgressDialog(
+						# Translators: UI message for Downloading...
 						_("Downloading..."),
+						# Translators: UI message for Downloading tracks...
 						_("Downloading tracks..."),
 						maximum=total,
 						parent=gui.mainFrame,
@@ -1007,16 +1100,19 @@ class YandexMusicDialog(wx.Dialog):
 					tones.beep(pitch, 100)
 					
 					wx.CallAfter(ui.message, f"{percent}%")
+					# Translators: UI message for Downloaded:
 					wx.CallAfter(dlg[0].Update, total_downloaded, f"{_('Downloaded:')} {total_downloaded}/{total}")
 				
 				wx.CallAfter(dlg[0].Destroy)
 				tones.beep(1760, 200); tones.beep(2000, 200)
+				# Translators: UI message for Done!
 				wx.CallAfter(ui.message, f"{_('Done!')} {total_downloaded} {_('tracks')}")
 				
 			except Exception as e:
 				is_gathering[0] = False
 				from logHandler import log
 				log.error(f"YAMUSIC Save Error: {e}", exc_info=True)
+				# Translators: UI message for Error:
 				wx.CallAfter(ui.message, _("Error:") + " " + str(e))
 				
 		threading.Thread(target=do_download).start()
@@ -1026,6 +1122,7 @@ class YandexMusicDialog(wx.Dialog):
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
+	# Translators: UI message for YaMusic Helper
 	scriptCategory = _("YaMusic Helper")
 
 	def __init__(self):
@@ -1039,9 +1136,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			pass
 		super(GlobalPlugin, self).terminate()
 
+	# Translators: UI message for Open Yandex Downloader
 	@script(description=_("Open Yandex Downloader"), gesture="kb:NVDA+shift+y")
 	def script_openYandex(self, gesture):
 		if not YANDEX_AVAILABLE:
+			# Translators: UI message for Error: yandex-music library missing!
 			ui.message(_("Error: yandex-music library missing!"))
 			return
 			
